@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 public class LectureDetailsAdapter extends RecyclerView.Adapter<LectureDetailsAdapter.ViewHolder> {
@@ -38,9 +40,27 @@ public class LectureDetailsAdapter extends RecyclerView.Adapter<LectureDetailsAd
 
         LectureDetails lectureDetail = lectureDetailsList.get(position);
 
-        holder.lecturename.setText(lectureDetail.getLectureName());
-        holder.lecturePlace.setText(lectureDetail.getLecturePlace());
+        double lectureDurationdouble = lectureDetail.getDuration();
+        Timestamp lectureStartTime = lectureDetail.getScheduledStart();
+        boolean lectureIsActive = lectureDetail.isActive;
+
+
+        holder.lecturename.setText(lectureDetail.getCourseName());
+        holder.lecturePlace.setText("VENUE: "+lectureDetail.getVenue());
+        holder.lectureDuration.setText("DURATION: "+ lectureDurationdouble);
+        holder.lectureTime.setText("START: "+lectureStartTime.getTime());
+        holder.lectureStatus.setText(getLectureStatus(lectureStartTime, lectureDurationdouble, lectureIsActive));
+
     }
+
+    // This method decide the lecture status
+    private String getLectureStatus(Timestamp lectureStartTime, Double lectureDurationdouble, Boolean lectureIsActive)
+    {
+        if(!lectureIsActive) return "CANCELLED";
+        //LOGIC TO BE DONE IN HERE.
+        return "RUNNING";
+    }
+
 
     @Override
     public int getItemCount() {
@@ -49,13 +69,17 @@ public class LectureDetailsAdapter extends RecyclerView.Adapter<LectureDetailsAd
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        public TextView lecturename, lecturePlace;
+        public TextView lecturename, lecturePlace, lectureTime, lectureDuration, lectureStatus;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             lecturename = (TextView) itemView.findViewById(R.id.lectureName);
             lecturePlace = (TextView) itemView.findViewById(R.id.lecturePlace);
+            lectureTime = (TextView) itemView.findViewById(R.id.lectureTime);
+            lectureDuration = (TextView) itemView.findViewById(R.id.lectureDuration);
+            lectureStatus = (TextView) itemView.findViewById(R.id.lectureStatus);
+
         }
     }
 

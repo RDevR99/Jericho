@@ -2,6 +2,8 @@ package com.example.mad_assignment;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.health.TimerStat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,15 +27,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-
-    private static final String dummy_url = "https://simplifiedcoding.net/demos/marvel/";
+    public String API_URL;
+    private static final String dummy_url = "http://my-json-server.typicode.com/RahulRathodGitHub/demoJSON/lectures/";//"https://simplifiedcoding.net/demos/marvel/";
     // We need to perform network based request. FOr doing that we are using Volley.
     // We also need internet permission for that in our manifest file.
 
@@ -50,12 +56,16 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
+       // The code below is flexible, but is it efficient?
+       // this.API_URL = getString(R.string.API_URL);
+
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         lectureDetailsList = new ArrayList<>();
 
+        // We have to set the adapter to empty values to prevent warnings and exceptions.
         adapter = new LectureDetailsAdapter(lectureDetailsList, getContext());
 
         recyclerView.setAdapter(adapter);
@@ -86,7 +96,7 @@ public class HomeFragment extends Fragment {
         progressDialog.setMessage("Loading.....");
         progressDialog.show();
 
-        // Now sing volley we wil make a string request
+        // Now trought stringRequest of volley we wil make a string request
 
         StringRequest stringRequest =  new StringRequest(Request.Method.GET,
                 dummy_url,
@@ -96,7 +106,6 @@ public class HomeFragment extends Fragment {
                     public void onResponse(String response) {
 
                         progressDialog.dismiss();
-
                         // We will get the whole JSON in here.
 
                         try {
@@ -108,8 +117,11 @@ public class HomeFragment extends Fragment {
                                 JSONObject obj = jsonArray.getJSONObject(i);
 
                                 LectureDetails lectureDetail = new LectureDetails(
-                                        obj.getString("name"),
-                                        obj.getString("team")
+                                        obj.getString("courseName"),
+                                        obj.getString("venue"),
+                                        toTimestamp(obj.getString("scheduledStart")),
+                                        obj.getDouble("duration"),
+                                        obj.getBoolean("isActive")
                                 );
 
                                 lectureDetailsList.add(lectureDetail);
@@ -129,7 +141,8 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         progressDialog.dismiss();
-                        Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG);
+                        Log.d(">>>>>>>>>>>>",""+error.getMessage());
+                       // Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG);
                     }
                 });
 
@@ -139,5 +152,20 @@ public class HomeFragment extends Fragment {
         requestQueue.add(stringRequest);
 
     }
+
+    private Timestamp toTimestamp(String timeStampString)
+    {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
+        Date parsedDate = null;
+        try {
+            parsedDate = dateFormat.parse(timeStampString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Timestamp timestamp = new Timestamp(((Date) parsedDate).getTime());
+
+        return timestamp;
+    }
+
 
 }

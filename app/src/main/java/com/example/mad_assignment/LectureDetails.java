@@ -1,27 +1,63 @@
 package com.example.mad_assignment;
+import java.sql.Timestamp;
 
 public class LectureDetails {
 
-    String lectureName, lecturePlace;
+    String courseName, venue;
+    Timestamp scheduledStart;
+    Double duration;
+    Boolean isActive;
 
-    public LectureDetails(String lectureName, String lecturePlace) {
-        this.lectureName = lectureName;
-        this.lecturePlace = lecturePlace;
+    public LectureDetails(String courseName, String venue) {
+        this.courseName = courseName;
+        this.venue = venue;
     }
 
-    public String getLectureName() {
-        return lectureName;
+    public LectureDetails(String courseName, String venue, Timestamp scheduledStart, Double duration, Boolean isActive) {
+        this.courseName = courseName;
+        this.venue = venue;
+        this.scheduledStart = scheduledStart;
+        this.duration = duration;
+        this.isActive = isActive;
     }
 
-    public void setLectureName(String lectureName) {
-        this.lectureName = lectureName;
+    public String getCourseName() {
+        return courseName;
     }
 
-    public String getLecturePlace() {
-        return lecturePlace;
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
     }
 
-    public void setLecturePlace(String lecturePlace) {
-        this.lecturePlace = lecturePlace;
+    public String getVenue() {
+        return venue;
+    }
+
+    public void setVenue(String venue) {
+        this.venue = venue;
+    }
+
+    public Timestamp getScheduledStart() {
+        return scheduledStart;
+    }
+
+    public void setScheduledStart(Timestamp scheduledStart) {
+        this.scheduledStart = scheduledStart;
+    }
+
+    public Double getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Double duration) {
+        this.duration = duration;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 }
