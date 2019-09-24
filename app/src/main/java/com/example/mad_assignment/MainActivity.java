@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -28,6 +30,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         navView.setOnNavigationItemSelectedListener(this);
 
         loadFragment(new HomeFragment());
+
+        /*Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                loadFragment(new HomeFragment());
+            }
+        }, 1000, 10000);*/
     }
 
     private boolean loadFragment(Fragment fragment){
@@ -45,6 +55,17 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         return false;
 
     }
+
+   /* public void refreshFragmentUI(Fragment fragment) {
+
+        if(fragment != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .detach(fragment)
+                    .attach(fragment)
+                    .commit();
+        }
+    }*/
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {

@@ -1,6 +1,7 @@
 package com.example.mad_assignment;
 
 import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.health.TimerStat;
 import android.util.Log;
@@ -33,6 +34,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class HomeFragment extends Fragment {
 
@@ -70,8 +73,12 @@ public class HomeFragment extends Fragment {
 
         recyclerView.setAdapter(adapter);
 
+
         // TO fetch the data
-        loadRecyclerViewData();
+        //loadRecyclerViewData();
+
+        // Fetch the data Asynchronously, have not implemented the loading circle yet!
+        new LoadRecyclerViewDataAsync().execute();
 
         /* ===============DUMMY HARDCODED DATA===============
         for(int i=0; i<=10; i++)
@@ -85,6 +92,72 @@ public class HomeFragment extends Fragment {
         }
         */
 
+    }
+
+    public class LoadRecyclerViewDataAsync extends AsyncTask<String, String, Void>{
+
+        @Override
+        protected Void doInBackground(String... strings) {
+
+            // In this method, we will fetch data from internet.
+            // As the data is coming from internet, it might take some time, so we will show a progress dialog.
+
+            // Now through stringRequest of volley we wil make a string request
+
+            StringRequest stringRequest =  new StringRequest(Request.Method.GET,
+                    dummy_url,
+                    new Response.Listener<String>() {
+
+                        @Override
+                        public void onResponse(String response) {
+
+                            // We will get the whole JSON in here.
+
+                            try {
+
+                                //JSONObject jsonObject = new JSONObject(response);
+                                JSONArray jsonArray = new JSONArray(response);
+
+                                for(int i=0; i<jsonArray.length(); i++) {
+                                    JSONObject obj = jsonArray.getJSONObject(i);
+
+                                    LectureDetails lectureDetail = new LectureDetails(
+                                            obj.getString("courseName"),
+                                            obj.getString("venue"),
+                                            toTimestamp(obj.getString("scheduledStart")),
+                                            obj.getDouble("duration"),
+                                            obj.getBoolean("isActive")
+                                    );
+
+                                    lectureDetailsList.add(lectureDetail);
+                                }
+
+                                adapter = new LectureDetailsAdapter(lectureDetailsList, getContext());
+
+                                recyclerView.setAdapter(adapter);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                            Log.d(">>>>>>>>>>>>",""+error.getMessage());
+                            // Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG);
+                        }
+                    });
+
+            // Now we have the request, to execute it we need a requst queue.
+
+            RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+            requestQueue.add(stringRequest);
+
+            return null;
+        }
     }
 
     private void loadRecyclerViewData()
