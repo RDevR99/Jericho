@@ -21,6 +21,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -42,9 +43,10 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     public String API_URL;
-    private static final String dummy_url = "http://my-json-server.typicode.com/RahulRathodGitHub/demoJSON/lectures/";//"https://simplifiedcoding.net/demos/marvel/";
+    private static final String dummy_url = "https://jericho.pnisolutions.com.au/Students/login";//"http://my-json-server.typicode.com/RahulRathodGitHub/demoJSON/lectures/";//"https://simplifiedcoding.net/demos/marvel/";
     // We need to perform network based request. FOr doing that we are using Volley.
     // We also need internet permission for that in our manifest file.
+    private JSONObject jsonBody = new JSONObject();
 
     private List<LectureDetails> lectureDetailsList;
 
@@ -104,12 +106,24 @@ public class HomeFragment extends Fragment {
 
             // Now through stringRequest of volley we wil make a string request
 
-            StringRequest stringRequest =  new StringRequest(Request.Method.GET,
+            try {
+                jsonBody.put("Email", "18916900@students.ltu.edu.au");
+                jsonBody.put("Password", "abcd1234");
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            final String requestBody = jsonBody.toString();
+
+            JsonObjectRequest jsonObjectRequest =  new JsonObjectRequest(Request.Method.POST,
                     dummy_url,
-                    new Response.Listener<String>() {
+                    jsonBody,
+                    new Response.Listener<JSONObject>() {
 
                         @Override
-                        public void onResponse(String response) {
+                        public void onResponse(JSONObject response) {
 
                             // We will get the whole JSON in here.
 
@@ -154,7 +168,7 @@ public class HomeFragment extends Fragment {
             // Now we have the request, to execute it we need a requst queue.
 
             RequestQueue requestQueue = Volley.newRequestQueue(getContext());
-            requestQueue.add(stringRequest);
+            requestQueue.add(jsonObjectRequest);
 
             return null;
         }
