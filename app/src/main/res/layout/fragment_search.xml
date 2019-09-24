@@ -2,12 +2,24 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <TextView
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="SEARCH"
+    <SearchView
+        android:id="@+id/searchBar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="-1dp"
+        android:queryHint="Search Lectures" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/searchRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="68dp" />
 
 
 </RelativeLayout>
