@@ -41,8 +41,7 @@ public class HomeFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    public String API_URL;
-    private static final String dummy_url = "http://my-json-server.typicode.com/RahulRathodGitHub/demoJSON/lectures/";//"https://simplifiedcoding.net/demos/marvel/";
+    private static final String API_URL = "http://my-json-server.typicode.com/RahulRathodGitHub/demoJSON/lectures/";//"https://simplifiedcoding.net/demos/marvel/";
     // We need to perform network based request. FOr doing that we are using Volley.
     // We also need internet permission for that in our manifest file.
 
@@ -73,12 +72,26 @@ public class HomeFragment extends Fragment {
 
         recyclerView.setAdapter(adapter);
 
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+
+            @Override
+            public void run() {
+                MainActivity activity = (MainActivity) getActivity();
+                lectureDetailsList = activity.getLectureList();
+                adapter = new LectureDetailsAdapter(lectureDetailsList, getContext());
+            }
+        }, 1000, 30000);
+
+
+
+
 
         // TO fetch the data
         //loadRecyclerViewData();
 
         // Fetch the data Asynchronously, have not implemented the loading circle yet!
-        new LoadRecyclerViewDataAsync().execute();
+        //new LoadRecyclerViewDataAsync().execute();
 
         /* ===============DUMMY HARDCODED DATA===============
         for(int i=0; i<=10; i++)
@@ -105,7 +118,7 @@ public class HomeFragment extends Fragment {
             // Now through stringRequest of volley we wil make a string request
 
             StringRequest stringRequest =  new StringRequest(Request.Method.GET,
-                    dummy_url,
+                    API_URL,
                     new Response.Listener<String>() {
 
                         @Override
@@ -172,7 +185,7 @@ public class HomeFragment extends Fragment {
         // Now trought stringRequest of volley we wil make a string request
 
         StringRequest stringRequest =  new StringRequest(Request.Method.GET,
-                dummy_url,
+                API_URL,
                 new Response.Listener<String>() {
 
                     @Override
