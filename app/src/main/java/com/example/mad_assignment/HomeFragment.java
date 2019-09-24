@@ -23,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +42,7 @@ public class HomeFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
+    private FloatingActionButton floatingActionButton;
     public String API_URL;
     private static final String dummy_url = "http://my-json-server.typicode.com/RahulRathodGitHub/demoJSON/lectures/";//"https://simplifiedcoding.net/demos/marvel/";
     // We need to perform network based request. FOr doing that we are using Volley.
@@ -65,6 +67,14 @@ public class HomeFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        floatingActionButton = view.findViewById(R.id.floatingActionButton);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new LoadRecyclerViewDataAsync().execute();
+            }
+        });
 
         lectureDetailsList = new ArrayList<>();
 
@@ -112,6 +122,7 @@ public class HomeFragment extends Fragment {
                         public void onResponse(String response) {
 
                             // We will get the whole JSON in here.
+                            lectureDetailsList = new ArrayList<>();
 
                             try {
 
