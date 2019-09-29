@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import com.android.volley.toolbox.JsonObjectRequest;
 
 public class HomeFragment extends Fragment {
 
@@ -44,11 +45,11 @@ public class HomeFragment extends Fragment {
     private RecyclerView.Adapter adapter;
     private FloatingActionButton floatingActionButton;
     public String API_URL;
-    private static final String dummy_url = "http://my-json-server.typicode.com/RahulRathodGitHub/demoJSON/lectures/";//"https://simplifiedcoding.net/demos/marvel/";
+    private static final String dummy_url = "https://jericho.pnisolutions.com.au/Students/login";//"http://my-json-server.typicode.com/RahulRathodGitHub/demoJSON/lectures/";//"https://simplifiedcoding.net/demos/marvel/";
     // We need to perform network based request. FOr doing that we are using Volley.
     // We also need internet permission for that in our manifest file.
-
-    private List<LectureDetails> lectureDetailsList;
+    private JSONObject jsonBody = new JSONObject();
+    private List<testDetails> lectureDetailsList;
 
     @Nullable
     @Override
@@ -79,7 +80,7 @@ public class HomeFragment extends Fragment {
         lectureDetailsList = new ArrayList<>();
 
         // We have to set the adapter to empty values to prevent warnings and exceptions.
-        adapter = new LectureDetailsAdapter(lectureDetailsList, getContext());
+        adapter = new testDetailsAdapter(lectureDetailsList, getContext());
 
         recyclerView.setAdapter(adapter);
 
@@ -113,13 +114,24 @@ public class HomeFragment extends Fragment {
             // As the data is coming from internet, it might take some time, so we will show a progress dialog.
 
             // Now through stringRequest of volley we wil make a string request
+            try{
+                jsonBody.put("Email", "18916900@students.ltu.edu.au");
+                jsonBody.put("Password", "abcd1234");
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
 
-            StringRequest stringRequest =  new StringRequest(Request.Method.GET,
+            final String requestBody = jsonBody.toString();
+
+            JsonObjectRequest jsonObjectRequest =  new JsonObjectRequest(Request.Method.POST,
                     dummy_url,
-                    new Response.Listener<String>() {
+                    jsonBody,
+                    new Response.Listener<JSONObject>() {
 
                         @Override
-                        public void onResponse(String response) {
+                        public void onResponse(JSONObject response) {
 
                             // We will get the whole JSON in here.
                             lectureDetailsList = new ArrayList<>();
@@ -127,23 +139,20 @@ public class HomeFragment extends Fragment {
                             try {
 
                                 //JSONObject jsonObject = new JSONObject(response);
-                                JSONArray jsonArray = new JSONArray(response);
+                               // JSONArray jsonArray = new JSONArray([response]);
 
-                                for(int i=0; i<jsonArray.length(); i++) {
-                                    JSONObject obj = jsonArray.getJSONObject(i);
+                                //for(int i=0; i<jsonArray.length(); i++) {
+                               //     JSONObject obj = jsonArray.getJSONObject(i);
 
-                                    LectureDetails lectureDetail = new LectureDetails(
-                                            obj.getString("courseName"),
-                                            obj.getString("venue"),
-                                            toTimestamp(obj.getString("scheduledStart")),
-                                            obj.getDouble("duration"),
-                                            obj.getBoolean("isActive")
+                                    testDetails testDetails1 = new testDetails(
+                                            response.getString("response"),
+                                            response.getString("data")
                                     );
 
-                                    lectureDetailsList.add(lectureDetail);
-                                }
+                                    lectureDetailsList.add(testDetails1);
+                               // }
 
-                                adapter = new LectureDetailsAdapter(lectureDetailsList, getContext());
+                                adapter = new testDetailsAdapter(lectureDetailsList, getContext());
 
                                 recyclerView.setAdapter(adapter);
 
@@ -165,7 +174,7 @@ public class HomeFragment extends Fragment {
             // Now we have the request, to execute it we need a requst queue.
 
             RequestQueue requestQueue = Volley.newRequestQueue(getContext());
-            requestQueue.add(stringRequest);
+            requestQueue.add(jsonObjectRequest);
 
             return null;
         }
@@ -208,12 +217,12 @@ public class HomeFragment extends Fragment {
                                         obj.getBoolean("isActive")
                                 );
 
-                                lectureDetailsList.add(lectureDetail);
+                               // lectureDetailsList.add(lectureDetail);
                             }
 
-                            adapter = new LectureDetailsAdapter(lectureDetailsList, getContext());
+                            //adapter = new LectureDetailsAdapter(lectureDetailsList, getContext());
 
-                            recyclerView.setAdapter(adapter);
+                           // recyclerView.setAdapter(adapter);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
