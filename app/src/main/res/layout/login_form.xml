@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="Login"
+        android:textSize="30sp" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="137dp"
+        android:background="#00FA3A3A" />
+
+    <RelativeLayout
+        android:layout_width="332dp"
+        android:layout_height="88dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:background="@null"><![CDATA[>
+
+
+
+        ]]>
+
+        <ImageView
+            android:id="@+id/image_account"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentBottom="false"
+            android:scaleType="fitXY"
+            app:srcCompat="@android:drawable/ic_menu_myplaces" />
+
+        <EditText
+            android:id="@+id/account"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="45dp"
+            android:layout_toRightOf="@id/image_account"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="user name" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="332dp"
+        android:layout_height="88dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:background="@null"><![CDATA[>
+
+
+
+        ]]>
+
+        <ImageView
+            android:id="@+id/image_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_lock_lock" />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/image_password"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Name"
+            tools:text="password" />
+
+        <ImageView
+            android:id="@+id/seepassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            app:srcCompat="@android:drawable/ic_menu_view" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/remember_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="50dp"
+            android:layout_weight="1"
+            android:text="Remember" />
+
+        <CheckBox
+            android:id="@+id/autologin"
+            android:layout_width="181dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center|left"
+            android:text="Auto login" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/loginBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:text="Login" />
+
+</LinearLayout>
