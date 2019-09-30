@@ -1,27 +1,22 @@
 package com.example.mad_assignment;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.MenuItem;
-import android.widget.TextView;
-
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -29,15 +24,41 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(this);
 
-        loadFragment(new HomeFragment());
+        //Lets assume that the below is the data we get from the server.
+        ArrayList<Integer> minutes = new ArrayList<>();
+        minutes.add(41);
+        minutes.add(42);
+        minutes.add(43);
+        minutes.add(44);
+        minutes.add(50);
 
-        /*Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                loadFragment(new HomeFragment());
-            }
-        }, 1000, 10000);*/
+        Calendar[] calendars = new Calendar[minutes.size()];
+
+        AlarmManager[] alarmManagers = new AlarmManager[minutes.size()];
+
+        ArrayList<PendingIntent> intentArray = new ArrayList<>();
+
+        for(int i=0; i<minutes.size(); i++)
+        {
+            calendars[i] = Calendar.getInstance();
+            calendars[i].set(Calendar.HOUR_OF_DAY, 23);
+            calendars[i].set(Calendar.MINUTE, minutes.get(i));
+
+            Intent intent = new Intent(this, NotificationReceiver.class);
+            intent.setAction("MY_NOTIFICATION_MESSAGE");
+
+            intent.putExtra("requestCode", i);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            alarmManagers[i] = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+            alarmManagers[i].setExact(AlarmManager.RTC_WAKEUP, calendars[i].getTimeInMillis(), pendingIntent);
+
+            intentArray.add(pendingIntent);
+
+        }
+
+        loadFragment(new HomeFragment());
     }
 
     private boolean loadFragment(Fragment fragment){
@@ -55,17 +76,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         return false;
 
     }
-
-   /* public void refreshFragmentUI(Fragment fragment) {
-
-        if(fragment != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .detach(fragment)
-                    .attach(fragment)
-                    .commit();
-        }
-    }*/
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
