@@ -82,10 +82,23 @@ public class LoginFunction extends Activity
     }
 
     private void setupEvents(){
-        Login_Btn.setOnClickListener(this);
-        C_remember.setOnCheckedChangeListener(this);
-        auto_Login.setOnCheckedChangeListener(this);
-        see_password.setOnClickListener(this);
+        Login_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadAccount();
+                login();
+            }
+        });
+
+       // C_remember.setOnCheckedChangeListener(this);
+       // auto_Login.setOnCheckedChangeListener(this);
+
+        see_password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setPasswordVisibility();
+            }
+        });
     }
 
     private boolean firstLogin(){
@@ -101,18 +114,7 @@ public class LoginFunction extends Activity
         }
         return false;
     }
-    @Override
-    public void onClick(View v){
-        switch (v.getId()){
-            case R.id.loginBtn:
-                loadAccount();
-                login();
-                break;
-            case R.id.seepassword:
-                setPasswordVisibility();
-                break;
-        }
-    }
+
     private void login(){
         if(getAccount().isEmpty()){
             showToast("Account required!");
@@ -195,7 +197,7 @@ public class LoginFunction extends Activity
             }
         }
     }
-    public void showToast(String msg){
+    public void showToast(final String msg){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
