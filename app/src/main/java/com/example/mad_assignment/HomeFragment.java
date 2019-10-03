@@ -25,11 +25,14 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,17 +42,20 @@ import java.util.Timer;
 import java.util.TimerTask;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+
+
 public class HomeFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private FloatingActionButton floatingActionButton;
     public String API_URL;
-    private static final String dummy_url = "https://jericho.pnisolutions.com.au/Students/login";//"http://my-json-server.typicode.com/RahulRathodGitHub/demoJSON/lectures/";//"https://simplifiedcoding.net/demos/marvel/";
+    private static final String dummy_url = "https://jericho.pnisolutions.com.au/Students/getClasses";//"http://my-json-server.typicode.com/RahulRathodGitHub/demoJSON/lectures/";//"https://simplifiedcoding.net/demos/marvel/";
     // We need to perform network based request. FOr doing that we are using Volley.
     // We also need internet permission for that in our manifest file.
     private JSONObject jsonBody = new JSONObject();
-    private List<testDetails> lectureDetailsList;
+    private List<LectureDetails> lectureDetailsList;
+    private DateTimeFormatter dateFormat = ISODateTimeFormat.dateTime();//.dateTimeNoMillis();
 
     @Nullable
     @Override
@@ -80,7 +86,7 @@ public class HomeFragment extends Fragment {
         lectureDetailsList = new ArrayList<>();
 
         // We have to set the adapter to empty values to prevent warnings and exceptions.
-        adapter = new testDetailsAdapter(lectureDetailsList, getContext());
+        adapter = new LectureDetailsAdapter(lectureDetailsList, getContext());
 
         recyclerView.setAdapter(adapter);
 
@@ -115,8 +121,8 @@ public class HomeFragment extends Fragment {
 
             // Now through stringRequest of volley we wil make a string request
             try{
-                jsonBody.put("Email", "18916900@students.ltu.edu.au");
-                jsonBody.put("Password", "abcd1234");
+                jsonBody.put("Identifier", "18916900");
+                jsonBody.put("Password", "1234");
             }
             catch (JSONException e)
             {
@@ -139,27 +145,30 @@ public class HomeFragment extends Fragment {
                             try {
 
                                 //JSONObject jsonObject = new JSONObject(response);
-                               // JSONArray jsonArray = new JSONArray([response]);
+                                JSONArray jsonArray = response.getJSONArray("data");
 
-                                //for(int i=0; i<jsonArray.length(); i++) {
-                               //     JSONObject obj = jsonArray.getJSONObject(i);
+                                for(int i=0; i<jsonArray.length(); i++) {
+                                   JSONObject obj = jsonArray.getJSONObject(i);
 
-                                    testDetails testDetails1 = new testDetails(
-                                            response.getString("response"),
-                                            response.getString("data")
+                                    LectureDetails lectureDetail = new LectureDetails(
+                                            obj.getString("CourseCode"),
+                                            obj.getString("Room"),
+                                            new Timestamp( dateFormat.parseDateTime(obj.getString("Time")).getMillis()), //Timestamp
+                                            obj.getDouble("Duration"),
+                                            obj.getInt("isRunning")==1
+
                                     );
 
-                                    lectureDetailsList.add(testDetails1);
-                               // }
+                                    lectureDetailsList.add(lectureDetail);
+                                }
 
-                                adapter = new testDetailsAdapter(lectureDetailsList, getContext());
+                                adapter = new LectureDetailsAdapter(lectureDetailsList, getContext());
 
                                 recyclerView.setAdapter(adapter);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-
                         }
                     },
                     new Response.ErrorListener() {
