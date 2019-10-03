@@ -16,59 +16,73 @@ public class LoginFunction extends Activity
     private EditText E_password;
     private Button Login_Btn;
     private CheckBox C_remember;
-    private CheckBox auto_Login;
+    private CheckBox auto_Login; // Keep me logged in
     private ImageView see_password;
+    private SharedPreferencesUtils sharedPreference;
 
     @Override
     protected  void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_form);
-        initViews();
-        setupEvents();
+        sharedPreference = new SharedPreferencesUtils(this,"setting");
+        initViews(); // Initialize the view components.
+        setupEvents(); // Set up the on click listeners.
         initData();
     }
 
     private void initData(){
+
         if(firstLogin()){
+            // These are false by default...
             C_remember.setChecked(false);
             auto_Login.setChecked(false);
         }
-        if(rememberPassword()) {
+
+        if(rememberPassword())
+        {
             C_remember.setChecked(true);
             setTextAccountAndPassword();
-        }else{
+        }
+        else{
             setTextAccount();
         }
+
         if(autoLogin()){
             auto_Login.setChecked(true);
             login();
         }
     }
+
     public void setTextAccountAndPassword(){
+
+        // Are we supposed to store account as shared preference values?
+        //sharedPreference.setString("account", E_account.getText());
+        //sharedPreference.setString("password", E_password.getText());
         E_account.setText("" + getLocalAccount());
         E_password.setText(""+ getLocalPassword());
     }
+
     public void setTextAccount(){
         E_account.setText("" + getLocalAccount());
     }
+
     public String getLocalAccount(){
-        SharedPreferencesUtils helper = new SharedPreferencesUtils(this, "setting");
-        String account = helper.getString("account");
+        String account = sharedPreference.getString("account");
         return account;
     }
+
     public String getLocalPassword() {
-        SharedPreferencesUtils helper = new SharedPreferencesUtils(this, "setting");
-        String password = helper.getString("password");
+        String password = sharedPreference.getString("password");
         return password;
     }
+
      public boolean autoLogin(){
-        SharedPreferencesUtils helper = new SharedPreferencesUtils(this, "setting");
-        boolean autoLogin = helper.getBoolean("autoLogin", false);
+        boolean autoLogin = sharedPreference.getBoolean("autoLogin", false);
         return autoLogin;
     }
+
     private boolean rememberPassword(){
-        SharedPreferencesUtils helper = new SharedPreferencesUtils(this, "setting");
-        boolean rememberPassword = helper.getBoolean("rememberPassword", false);
+        boolean rememberPassword = sharedPreference.getBoolean("rememberPassword", false);
         return rememberPassword;
     }
 
@@ -85,7 +99,9 @@ public class LoginFunction extends Activity
         Login_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Loads the shared preference key value pair with the account information
                 loadAccount();
+                // Authenticates user and changes view to the home fragment.
                 login();
             }
         });
@@ -102,10 +118,9 @@ public class LoginFunction extends Activity
     }
 
     private boolean firstLogin(){
-        SharedPreferencesUtils helper = new SharedPreferencesUtils(this, "setting");
-        boolean first = helper.getBoolean("first", true);
+        boolean first = sharedPreference.getBoolean("first", true);
         if(first){
-            helper.putValues(new SharedPreferencesUtils.ContentValue("first", false),
+            sharedPreference.putValues(new SharedPreferencesUtils.ContentValue("first", false),
                     new SharedPreferencesUtils.ContentValue("remenberPassword", false),
                     new SharedPreferencesUtils.ContentValue("autoLogin", false),
                     new SharedPreferencesUtils.ContentValue("name", ""),
@@ -129,37 +144,49 @@ public class LoginFunction extends Activity
             public void run() {
                 super.run();
                 setLoginBtnClickable(false);
-                if (getAccount().equals("admin") && getPassword().equals("admin")) {
+
+                // This condition will change to pass HTTP requests
+                // if(request.getString("response").equalsIgnoreCase("Success"))
+                if (getAccount().equals("admin") && getPassword().equals("admin"))
+                {
                     loadCheckBoxState();
                     startActivity(new Intent(LoginFunction.this, HomeFragment.class));
                    // finish();
-                } else {
+                }
+                else {
                     showToast("Invalid account or password");
                 }
-                setLoginBtnClickable(true);
+
+                // Not sure if the below line is required.
+                //setLoginBtnClickable(true);
             }
         };
 
         loginRunnable.start();
     }
-    public void loadAccount(){
-        if(!getAccount().equals("") || !getAccount().equals("Account required!")){
-            SharedPreferencesUtils helper = new SharedPreferencesUtils(this,"setting");
-            helper.putValues(new SharedPreferencesUtils.ContentValue("account", getAccount()));
+    public void loadAccount()
+    {
+        // getAccount gives you the username.
+        if(!getAccount().equals("") || !getAccount().equals("Account required!"))
+        {
+            // Shared preferences are used to store the key value pairs at an application level.
+            sharedPreference.putValues(new SharedPreferencesUtils.ContentValue("account", getAccount()));
         }
     }
     private void setPasswordVisibility(){
         if(see_password.isSelected()){
-            see_password.setSelected(false);
+            //see_password.setSelected(false);
             E_password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         }else{
-            see_password.setSelected(true);
+           // see_password.setSelected(true);
             E_password.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
         }
     }
-    public String getAccount(){
+    public String getAccount()
+    {
         return E_account.getText().toString().trim();
     }
+
     public String getPassword(){
         return E_password.getText().toString().trim();
     }
@@ -167,19 +194,21 @@ public class LoginFunction extends Activity
         loadCheckBoxState(C_remember, auto_Login);
     }
     public void loadCheckBoxState(CheckBox C_remember, CheckBox auto_Login){
-        SharedPreferencesUtils helper = new SharedPreferencesUtils(this,"setting");
+
         if(auto_Login.isSelected()){
-            helper.putValues(
+            sharedPreference.putValues(
                     new SharedPreferencesUtils.ContentValue("rememberPassword", true),
                     new SharedPreferencesUtils.ContentValue("autoLogin", true),
                     new SharedPreferencesUtils.ContentValue("password",getPassword()));
-        }else if(!C_remember.isSelected()) {
-            helper.putValues(
+        }
+        else if(!C_remember.isSelected()) {
+            sharedPreference.putValues(
                     new SharedPreferencesUtils.ContentValue("rememberPassword", false),
                     new SharedPreferencesUtils.ContentValue("autoLogin", false),
                     new SharedPreferencesUtils.ContentValue("password", ""));
-        }else if(C_remember.isSelected()){
-            helper.putValues(
+        }
+        else if(C_remember.isSelected()){
+            sharedPreference.putValues(
                     new SharedPreferencesUtils.ContentValue("rememberPassword", true),
                     new SharedPreferencesUtils.ContentValue("autoLogin", false),
                     new SharedPreferencesUtils.ContentValue("password", getPassword()));
@@ -188,6 +217,7 @@ public class LoginFunction extends Activity
     public void setLoginBtnClickable(boolean clickable){
         Login_Btn.setClickable(clickable);
     }
+
     public void onCheckChanged(CompoundButton buttonView, boolean isChecked){
         if(buttonView ==C_remember){
             if(!isChecked){
