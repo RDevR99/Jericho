@@ -132,13 +132,15 @@ public class LoginFunction extends Activity
                 if (getAccount().equals("admin") && getPassword().equals("admin")) {
                     loadCheckBoxState();
                     startActivity(new Intent(LoginFunction.this, HomeFragment.class));
-                    finish();
+                   // finish();
                 } else {
                     showToast("Invalid account or password");
                 }
                 setLoginBtnClickable(true);
             }
         };
+
+        loginRunnable.start();
     }
     public void loadAccount(){
         if(!getAccount().equals("") || !getAccount().equals("Account required!")){
