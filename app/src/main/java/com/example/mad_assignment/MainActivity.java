@@ -64,15 +64,16 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setCurrentItem(0);
         viewPager.setOnPageChangeListener(new PageChange());
 
-
+        //Lets assume we have data in shared preference utils
+        int remindBeforeTime = 10; // remind me before 10 minutes
 
         //Lets assume that the below is the data we get from the server.
         ArrayList<Integer> minutes = new ArrayList<>();
         minutes.add(41);
-        minutes.add(42);
-        minutes.add(43);
-        minutes.add(44);
-        minutes.add(50);
+        minutes.add(40);
+        minutes.add(33);
+        minutes.add(4);
+        minutes.add(39);
 
         Calendar[] calendars = new Calendar[minutes.size()];
 
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         {
             calendars[i] = Calendar.getInstance();
             calendars[i].set(Calendar.HOUR_OF_DAY, 23);
-            calendars[i].set(Calendar.MINUTE, minutes.get(i));
+            calendars[i].set(Calendar.MINUTE, minutes.get(i) - remindBeforeTime);
 
             Intent intent = new Intent(this, NotificationReceiver.class);
             intent.setAction("MY_NOTIFICATION_MESSAGE");
