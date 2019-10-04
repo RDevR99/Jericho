@@ -60,7 +60,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/password"
         app:layout_constraintVertical_bias="0.47"
-        app:srcCompat="@android:drawable/ic_menu_view" />
+        android:src="@android:drawable/ic_menu_view" />
 
     <CheckBox
         android:id="@+id/remember_password"
