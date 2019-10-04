@@ -8,11 +8,46 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
+
 import android.view.MenuItem;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
+
+    BottomNavigationView navView;
+    ViewPager viewPager;
+
+    public static void setupFm(FragmentManager fragmentManager, ViewPager viewPager){
+        FragmentAdapter Adapter = new FragmentAdapter(fragmentManager);
+        //Add All Fragment To List
+        Adapter.add(new HomeFragment(), "Home Page");
+        Adapter.add(new SearchFragment(), "Search Page");
+        Adapter.add(new SettingsFragment(), "Settings Page");
+        viewPager.setAdapter(Adapter);
+    }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_home:
+                    viewPager.setCurrentItem(0);
+                    return true;
+                case R.id.navigation_search:
+                    viewPager.setCurrentItem(1);
+                    return true;
+                case R.id.navigation_settings:
+                    viewPager.setCurrentItem(2);
+                    return true;
+            }
+            return false;
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,8 +56,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         setContentView(R.layout.activity_main);
 
         // Initialized the navigation View.
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        navView.setOnNavigationItemSelectedListener(this);
+        navView = findViewById(R.id.nav_view);
+        navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        viewPager = findViewById(R.id.viewPager);
+        setupFm(getSupportFragmentManager(), viewPager);
+        viewPager.setCurrentItem(0);
+        viewPager.setOnPageChangeListener(new PageChange());
+
+
 
         //Lets assume that the below is the data we get from the server.
         ArrayList<Integer> minutes = new ArrayList<>();
@@ -58,43 +100,31 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         }
 
-        loadFragment(new HomeFragment());
     }
 
-    private boolean loadFragment(Fragment fragment){
 
-        if(fragment != null)
-        {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .commit();
 
-            return true;
+
+    public class PageChange implements ViewPager.OnPageChangeListener {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         }
-
-        return false;
-
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-
-        Fragment fragment = null;
-
-        switch(menuItem.getItemId()){
-
-            case R.id.navigation_home:
-                fragment = new HomeFragment();
-                break;
-            case R.id.navigation_search:
-                fragment = new SearchFragment();
-                break;
-            case R.id.navigation_settings:
-                fragment = new SettingsFragment();
-                break;
+        @Override
+        public void onPageSelected(int position) {
+            switch (position) {
+                case 0:
+                    navView.setSelectedItemId(R.id.navigation_home);
+                    break;
+                case 1:
+                    navView.setSelectedItemId(R.id.navigation_search);
+                    break;
+                case 2:
+                    navView.setSelectedItemId(R.id.navigation_settings);
+                    break;
+            }
         }
-
-        return loadFragment(fragment);
+        @Override
+        public void onPageScrollStateChanged(int state) {
+        }
     }
 }
