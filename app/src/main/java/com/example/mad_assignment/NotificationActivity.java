@@ -8,7 +8,9 @@ import android.os.Bundle;
 
 import com.example.mad_assignment.R;
 
-
+/*
+    This class represents the logic after the user clicks on a notification.
+ */
 public class NotificationActivity extends Activity {
 
     @Override

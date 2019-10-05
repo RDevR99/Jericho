@@ -16,6 +16,9 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+/*
+    This Adapter is utilized by the recycler view to populate lecture details in a vertical scrollable list of cards.
+ */
 public class LectureDetailsAdapter extends RecyclerView.Adapter<LectureDetailsAdapter.ViewHolder> {
 
     private List<LectureDetails> lectureDetailsList;

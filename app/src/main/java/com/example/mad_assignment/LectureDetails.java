@@ -1,6 +1,9 @@
 package com.example.mad_assignment;
 import java.sql.Timestamp;
 
+/*
+    This class represents the data structure for one lecture component.
+ */
 public class LectureDetails {
 
     String courseName, venue;

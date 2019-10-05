@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FragmentAdapter extends FragmentPagerAdapter {
+
     private List<androidx.fragment.app.Fragment> Fragment = new ArrayList<>(); //Fragment List
     private List<String> NamePage = new ArrayList<>(); // Fragment Name List
     public FragmentAdapter(FragmentManager manager) {

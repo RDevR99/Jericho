@@ -46,6 +46,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                 .setSmallIcon(R.drawable.ic_golf_course_black_24dp)
                 .setContentIntent(pendingIntent).build();
 
+
        // builder.setDefaults(Notification.DEFAULT_VIBRATE);
        // builder.setDefaults(Notification.DEFAULT_SOUND);
        // builder.setDefaults(Notification.DEFAULT_LIGHTS);
@@ -56,31 +57,3 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     }
 }
-/*
-public class NotificationReceiver extends BroadcastReceiver {
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        Intent alarmIntent = new Intent(context, HomeFragment.class);
-        alarmIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-                .setContentIntent(pendingIntent)
-                .setSmallIcon(R.drawable.ic_settings_black_24dp)
-                .setContentTitle("Notification Title")
-                .setContentText("Notification Text")
-                .setAutoCancel(true);
-
-        if(intent.getAction().equals("MY_NOTIFICATION_MESSAGE"))
-        {
-            notificationManager.notify(0, builder.build());
-        }
-
-
-
-    }
-}*/
