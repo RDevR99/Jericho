@@ -1,5 +1,7 @@
 package com.example.mad_assignment;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -7,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,6 +42,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 public class HomeFragment extends Fragment {
 
+	Button loginButton;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private FloatingActionButton floatingActionButton;
@@ -59,6 +63,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         return inflater.inflate(R.layout.fragment_home, null);
+
 
     }
 
