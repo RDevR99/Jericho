@@ -43,9 +43,6 @@ public class LoginFunction extends Activity
             C_remember.setChecked(true);
             setTextAccountAndPassword();
         }
-        else{
-            setTextAccount();
-        }
 
         if(autoLogin()){
             auto_Login.setChecked(true);
@@ -62,9 +59,9 @@ public class LoginFunction extends Activity
         E_password.setText(""+ getLocalPassword());
     }
 
-    public void setTextAccount(){
+    /*public void setTextAccount(){
         E_account.setText("" + getLocalAccount());
-    }
+    }*/
 
     public String getLocalAccount(){
         String account = sharedPreference.getString("account");
@@ -121,7 +118,7 @@ public class LoginFunction extends Activity
         boolean first = sharedPreference.getBoolean("first", true);
         if(first){
             sharedPreference.putValues(new SharedPreferencesUtils.ContentValue("first", false),
-                    new SharedPreferencesUtils.ContentValue("remenberPassword", false),
+                    new SharedPreferencesUtils.ContentValue("rememberPassword", false),
                     new SharedPreferencesUtils.ContentValue("autoLogin", false),
                     new SharedPreferencesUtils.ContentValue("name", ""),
                     new SharedPreferencesUtils.ContentValue("password", ""));
@@ -199,6 +196,7 @@ public class LoginFunction extends Activity
             sharedPreference.putValues(
                     new SharedPreferencesUtils.ContentValue("rememberPassword", true),
                     new SharedPreferencesUtils.ContentValue("autoLogin", true),
+                    new SharedPreferencesUtils.ContentValue("account",getAccount()),
                     new SharedPreferencesUtils.ContentValue("password",getPassword()));
         }
         else if(!C_remember.isSelected()) {
@@ -211,6 +209,7 @@ public class LoginFunction extends Activity
             sharedPreference.putValues(
                     new SharedPreferencesUtils.ContentValue("rememberPassword", true),
                     new SharedPreferencesUtils.ContentValue("autoLogin", false),
+                    new SharedPreferencesUtils.ContentValue("account",getAccount()),
                     new SharedPreferencesUtils.ContentValue("password", getPassword()));
         }
     }

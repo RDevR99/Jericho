@@ -22,9 +22,10 @@
 
     <EditText
         android:id="@+id/account"
-        android:layout_width="351dp"
-        android:layout_height="51dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         android:ems="10"
         android:hint="Username"
         android:inputType="textPersonName"
@@ -37,8 +38,10 @@
 
     <EditText
         android:id="@+id/password"
-        android:layout_width="357dp"
-        android:layout_height="49dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         android:ems="10"
         android:hint="Password"
         android:inputType="textPersonName"
@@ -47,8 +50,7 @@
         app:layout_constraintHorizontal_bias="0.574"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/account"
-        app:layout_constraintVertical_bias="0.191"
-        tools:text="password" />
+        app:layout_constraintVertical_bias="0.191" />
 
     <ImageView
         android:id="@+id/seepassword"
@@ -68,13 +70,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="1"
-        android:text="Remember"
+        android:text="Remember password"
         app:layout_constraintBottom_toTopOf="@+id/loginBtn"
         app:layout_constraintEnd_toStartOf="@+id/autologin"
-        app:layout_constraintHorizontal_bias="0.18"
+        app:layout_constraintHorizontal_bias="0.385"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password"
-        app:layout_constraintVertical_bias="0.747" />
+        app:layout_constraintVertical_bias="0.745" />
 
     <CheckBox
         android:id="@+id/autologin"
@@ -82,10 +84,12 @@
         android:layout_height="33dp"
         android:layout_gravity="center"
         android:layout_marginStart="224dp"
+        android:layout_marginEnd="32dp"
         android:layout_weight="1"
         android:gravity="center|left"
         android:text="Keep me logged in"
         app:layout_constraintBottom_toTopOf="@+id/loginBtn"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password"
         app:layout_constraintVertical_bias="0.745" />
@@ -94,6 +98,8 @@
         android:id="@+id/loginBtn"
         android:layout_width="367dp"
         android:layout_height="46dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         android:text="Login"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
