@@ -48,7 +48,7 @@ public class HomeFragment extends Fragment {
     private Button loginButton;
 
     /*
-       We need to perform network based request. FOr doing that we are using Volley.
+       We need to perform network based request. For doing that we are using Volley.
        We also need internet permission for that in our manifest file.
      */
     private static final String API = "https://jericho.pnisolutions.com.au/Students/getClasses";
@@ -87,16 +87,6 @@ public class HomeFragment extends Fragment {
                 new LoadRecyclerViewDataAsync().execute();
             }
         });
-
-        loginButton = view.findViewById(R.id.loginButton);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent loginIntent = new Intent(getContext(), LoginFunction.class);
-                startActivity(loginIntent);
-            }
-        });
-
 
         // The actual list that will store the LectureDetail components.
         lectureDetailsList = new ArrayList<>();

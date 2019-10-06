@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
@@ -19,9 +20,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,9 +42,15 @@ public class SearchFragment extends Fragment {
     private SearchView searchBar;
     private RecyclerView searchRecyclerView;
     private RecyclerView.Adapter adapter;
-    private static final String dummy_url = "http://my-json-server.typicode.com/RahulRathodGitHub/demoJSON/lectures/";
+    private TextView courseCode;
+    private TextView outcomeLabel;
 
+    private static final String SearchAPI = "https://jericho.pnisolutions.com.au/Public/getSubject";//http://my-json-server.typicode.com/RahulRathodGitHub/demoJSON/lectures/";
+    private JSONObject jsonBody = new JSONObject();
     private List<LectureDetails> lectureDetailsList;
+
+    // We are using joda time for easier time formatting.
+    private DateTimeFormatter dateFormat = ISODateTimeFormat.dateTime();
 
     @Nullable
     @Override
@@ -55,6 +65,8 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         searchBar = (SearchView) view.findViewById(R.id.searchBar);
+        courseCode = (TextView) view.findViewById(R.id.CourseCode);
+        outcomeLabel = (TextView) view.findViewById(R.id.outcomeLabel);
 
         searchRecyclerView = (RecyclerView) view.findViewById(R.id.searchRecyclerView);
         searchRecyclerView.setHasFixedSize(true);
@@ -68,14 +80,27 @@ public class SearchFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String s) {
 
-                List<LectureDetails> lectureDetails = new ArrayList<>();
+                courseCode.setText("Course Code: "+s.toUpperCase());
+
+                if(s!="")
+                {
+                    courseCode.setVisibility(View.VISIBLE);
+                    outcomeLabel.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    courseCode.setVisibility(View.INVISIBLE);
+                    outcomeLabel.setVisibility(View.INVISIBLE);
+                }
+
+               /* List<LectureDetails> lectureDetails = new ArrayList<>();
 
                 for(LectureDetails lectureDetail: lectureDetailsList){
 
                     if(lectureDetail.courseName.contains(s)){
                         lectureDetails.add(lectureDetail);
                     }
-                }
+                }*/
 
                 new LoadRecyclerViewDataAsync().execute(s);
 
@@ -107,12 +132,22 @@ public class SearchFragment extends Fragment {
             }
             final String finalQuery = query;
 
-            final StringRequest stringRequest =  new StringRequest(Request.Method.GET,
-                    dummy_url,
-                    new Response.Listener<String>() {
+            try{
+                jsonBody.put("CourseCode", finalQuery.toUpperCase());
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            final String requestBody = jsonBody.toString();
+
+            JsonObjectRequest jsonObjectRequest =  new JsonObjectRequest(Request.Method.POST,
+                    SearchAPI,
+                    jsonBody,
+                    new Response.Listener<JSONObject>() {
 
                         @Override
-                        public void onResponse(String response) {
+                        public void onResponse(JSONObject response) {
 
                             // We will get the whole JSON in here.
                             lectureDetailsList = new ArrayList<>();
@@ -120,23 +155,21 @@ public class SearchFragment extends Fragment {
                             try {
 
                                 //JSONObject jsonObject = new JSONObject(response);
-                                JSONArray jsonArray = new JSONArray(response);
+                                JSONArray jsonArray = response.getJSONArray("data");
 
                                 for(int i=0; i<jsonArray.length(); i++) {
                                     JSONObject obj = jsonArray.getJSONObject(i);
 
                                     LectureDetails lectureDetail = new LectureDetails(
-                                            obj.getString("courseName"),
-                                            obj.getString("venue"),
-                                            toTimestamp(obj.getString("scheduledStart")),
-                                            obj.getDouble("duration"),
-                                            obj.getBoolean("isActive")
+                                            obj.getString("CourseCode"),
+                                            obj.getString("Room"),
+                                            new Timestamp( dateFormat.parseDateTime(obj.getString("Time")).getMillis()), //Timestamp
+                                            obj.getDouble("Duration"),
+                                            obj.getInt("isRunning")==1
+
                                     );
 
-
                                     lectureDetailsList.add(lectureDetail);
-
-
                                 }
 
                                 adapter = new LectureDetailsAdapter(lectureDetailsList, getContext());
@@ -146,7 +179,6 @@ public class SearchFragment extends Fragment {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-
                         }
                     },
                     new Response.ErrorListener() {
@@ -158,10 +190,11 @@ public class SearchFragment extends Fragment {
                         }
                     });
 
+
             // Now we have the request, to execute it we need a requst queue.
 
             RequestQueue requestQueue = Volley.newRequestQueue(getContext());
-            requestQueue.add(stringRequest);
+            requestQueue.add(jsonObjectRequest);
 
             return null;
         }
