@@ -4,7 +4,15 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
@@ -16,7 +24,11 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import org.joda.time.DateTime;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,7 +42,10 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<PendingIntent> intentArray;
     Calendar[] calendars;
     //Lets assume that the below is the data we get from the server.
-    ArrayList<Long> minutes = new ArrayList<>();
+    ArrayList<Long> alarmSchedules = new ArrayList<>();
+
+    private static final String API = "https://jericho.pnisolutions.com.au/Students/getClasses";
+    private JSONObject jsonBody = new JSONObject();
 
     SharedPreferences sharedPreferences;
 
@@ -109,29 +124,97 @@ public class MainActivity extends AppCompatActivity {
          notifyMeBeforeHours = sharedPreferences.getInt("notifyMeBeforeHours", 0);
          notifyMeBeforeMinutes = sharedPreferences.getInt("notifyMeBeforeMinutes", 0);
 
-         Log.d("This is from the Main >", ""+notifyMeBeforeMinutes);
+         new SetAlarmSchedulesAsync().execute(""+notifyMeBeforeHours, ""+notifyMeBeforeMinutes);
 
-        minutes.add(new DateTime().plusHours(notifyMeBeforeHours).plusMinutes(notifyMeBeforeMinutes).getMillis());
+      //  alarmSchedules.add(new DateTime().plusHours(notifyMeBeforeHours).plusMinutes(notifyMeBeforeMinutes).getMillis());
 
         setAlarms();
 
 
     }
 
+    /*
+        Method to Asynchronously load the data for the Recycler View.
+     */
+    public class SetAlarmSchedulesAsync extends AsyncTask<String, String, Void> {
+
+        @Override
+        protected Void doInBackground(final String... strings) {
+
+            // In this method, we will fetch data from internet.
+            // As the data is coming from internet, it might take some time, so we will show a progress dialog.
+
+            // Now through stringRequest of volley we wil make a string request
+            try{
+                jsonBody.put("Identifier", "18916900");
+                jsonBody.put("Password", "1234");
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+
+            final String requestBody = jsonBody.toString();
+
+            JsonObjectRequest jsonObjectRequest =  new JsonObjectRequest(Request.Method.POST,
+                    API,
+                    jsonBody,
+                    new Response.Listener<JSONObject>() {
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+
+                            try {
+
+                                //JSONObject jsonObject = new JSONObject(response);
+                                JSONArray jsonArray = response.getJSONArray("data");
+
+                                for(int i=0; i<jsonArray.length(); i++) {
+                                    JSONObject obj = jsonArray.getJSONObject(i);
+
+                                    alarmSchedules.add(DateTime.parse(obj.getString("Time"))
+                                            .plusHours(Integer.valueOf(strings[0]))
+                                            .plusMinutes(Integer.valueOf(strings[1]))
+                                            .getMillis());
+
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                            Log.d(">>>>>>>>>>>>",""+error.getMessage());
+                        }
+                    });
+
+            // Now we have the request, to execute it we need a requst queue.
+
+            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+            requestQueue.add(jsonObjectRequest);
+
+            return null;
+        }
+    }
+
     public void setAlarms()
     {
-        calendars = new Calendar[minutes.size()];
+        calendars = new Calendar[alarmSchedules.size()];
 
-        alarmManagers = new AlarmManager[minutes.size()];
+        alarmManagers = new AlarmManager[alarmSchedules.size()];
 
         intentArray = new ArrayList<>();
 
-        for(int i=0; i<minutes.size(); i++)
+        for(int i=0; i<alarmSchedules.size(); i++)
         {
             calendars[i] = Calendar.getInstance();
-            calendars[i].setTimeInMillis(minutes.get(i));
+            calendars[i].setTimeInMillis(alarmSchedules.get(i));
             //calendars[i].set(Calendar.HOUR_OF_DAY, 23);
-            //calendars[i].set(Calendar.MINUTE, minutes.get(i));
+            //calendars[i].set(Calendar.MINUTE, alarmSchedules.get(i));
 
             Intent intent = new Intent(this, NotificationReceiver.class);
             intent.setAction("MY_NOTIFICATION_MESSAGE");

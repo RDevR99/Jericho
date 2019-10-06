@@ -20,9 +20,11 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:clickable="true"
+        android:elevation="12dp"
         android:focusable="auto"
         app:fabSize="auto"
         app:maxImageSize="30dp"
+        app:pressedTranslationZ="6dp"
         app:rippleColor="#00CA2C2C"
         app:srcCompat="@android:drawable/ic_popup_sync" />
 

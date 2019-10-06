@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -76,6 +77,8 @@ public class SearchFragment extends Fragment {
 
         adapter = new LectureDetailsAdapter(lectureDetailsList, getContext());
 
+        searchBar.setQueryHint("Search Course Code");
+
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -93,15 +96,6 @@ public class SearchFragment extends Fragment {
                     outcomeLabel.setVisibility(View.INVISIBLE);
                 }
 
-               /* List<LectureDetails> lectureDetails = new ArrayList<>();
-
-                for(LectureDetails lectureDetail: lectureDetailsList){
-
-                    if(lectureDetail.courseName.contains(s)){
-                        lectureDetails.add(lectureDetail);
-                    }
-                }*/
-
                 new LoadRecyclerViewDataAsync().execute(s);
 
                 return false;
@@ -109,6 +103,13 @@ public class SearchFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String s) {
+                if(s.isEmpty())
+                {
+                    courseCode.setVisibility(View.INVISIBLE);
+                    outcomeLabel.setVisibility(View.INVISIBLE);
+
+                    new LoadRecyclerViewDataAsync().execute("");
+                }
                 return false;
             }
         });
