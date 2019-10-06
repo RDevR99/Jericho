@@ -42,10 +42,10 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 public class HomeFragment extends Fragment {
 
-	Button loginButton;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private FloatingActionButton floatingActionButton;
+    private Button loginButton;
 
     /*
        We need to perform network based request. FOr doing that we are using Volley.
@@ -87,6 +87,16 @@ public class HomeFragment extends Fragment {
                 new LoadRecyclerViewDataAsync().execute();
             }
         });
+
+        loginButton = view.findViewById(R.id.loginButton);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent loginIntent = new Intent(getContext(), LoginFunction.class);
+                startActivity(loginIntent);
+            }
+        });
+
 
         // The actual list that will store the LectureDetail components.
         lectureDetailsList = new ArrayList<>();
@@ -200,6 +210,7 @@ public class HomeFragment extends Fragment {
         return timestamp;
     }
     //endregion
+
 
 
 }

@@ -26,4 +26,14 @@
         app:rippleColor="#00CA2C2C"
         app:srcCompat="@android:drawable/ic_popup_sync" />
 
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="149dp"
+        android:layout_marginTop="139dp"
+        android:text="LOGIN" />
+
 </RelativeLayout>
