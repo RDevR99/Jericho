@@ -28,4 +28,18 @@
         app:rippleColor="#00CA2C2C"
         app:srcCompat="@android:drawable/ic_popup_sync" />
 
+    <EditText
+        android:id="@+id/ErrorText"
+        android:layout_width="wrap_content"
+        android:layout_height="203dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="99dp"
+        android:layout_marginTop="275dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        android:visibility="invisible" />
+
 </RelativeLayout>

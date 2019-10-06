@@ -2,14 +2,22 @@ package com.example.mad_assignment;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -124,12 +132,24 @@ public class MainActivity extends AppCompatActivity {
          notifyMeBeforeHours = sharedPreferences.getInt("notifyMeBeforeHours", 0);
          notifyMeBeforeMinutes = sharedPreferences.getInt("notifyMeBeforeMinutes", 0);
 
-         new SetAlarmSchedulesAsync().execute(""+notifyMeBeforeHours, ""+notifyMeBeforeMinutes);
-
-      //  alarmSchedules.add(new DateTime().plusHours(notifyMeBeforeHours).plusMinutes(notifyMeBeforeMinutes).getMillis());
+       // if(isInternetAvailable()) {
+            new SetAlarmSchedulesAsync().execute("" + notifyMeBeforeHours, "" + notifyMeBeforeMinutes);
+       // }
+       // else
+       // {
+            //TODO Handle no internet connection
+       // }
 
         setAlarms();
 
+
+    }
+
+    private boolean isInternetAvailable()
+    {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo internetInfo = connectivityManager.getActiveNetworkInfo();
+        return internetInfo != null && internetInfo.isConnected();
 
     }
 
@@ -189,6 +209,19 @@ public class MainActivity extends AppCompatActivity {
                         public void onErrorResponse(VolleyError error) {
 
                             Log.d(">>>>>>>>>>>>",""+error.getMessage());
+
+                            if(error instanceof TimeoutError || error instanceof NoConnectionError){
+
+                            }
+                            else if(error instanceof AuthFailureError){
+
+                            }
+                            else if(error instanceof ServerError){
+
+                            }
+                            else if(error instanceof ParseError){
+
+                            }
                         }
                     });
 
