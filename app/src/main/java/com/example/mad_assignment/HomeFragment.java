@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,9 +18,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -46,6 +51,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView.Adapter adapter;
     private FloatingActionButton floatingActionButton;
     private Button loginButton;
+    private TextView NoInetHome;
 
     /*
        We need to perform network based request. For doing that we are using Volley.
@@ -74,6 +80,7 @@ public class HomeFragment extends Fragment {
        // this.API_URL = getString(R.string.API_URL);
 
         // We use recycler view to display data as a vertical scrollable screen.
+        NoInetHome = (TextView) view.findViewById(R.id.NoInetHome);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true); // Every component will have a same size
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -139,6 +146,7 @@ public class HomeFragment extends Fragment {
                             lectureDetailsList = new ArrayList<>();
 
                             try {
+                                NoInetHome.setVisibility(View.INVISIBLE);
 
                                 //JSONObject jsonObject = new JSONObject(response);
                                 JSONArray jsonArray = response.getJSONArray("data");
@@ -162,16 +170,24 @@ public class HomeFragment extends Fragment {
 
                                 recyclerView.setAdapter(adapter);
 
-                            } catch (JSONException e) {
+                            }
+                            catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
                     },
                     new Response.ErrorListener() {
                         @Override
-                        public void onErrorResponse(VolleyError error) {
+                        public void onErrorResponse(VolleyError volleyError) {
 
-                            Log.d(">>>>>>>>>>>>",""+error.getMessage());
+                            if (volleyError instanceof NetworkError || volleyError instanceof AuthFailureError || volleyError instanceof TimeoutError) {
+
+                                NoInetHome.setVisibility(View.VISIBLE);
+                                Log.d(">>>>>>>>>>>>","Internet Error: "+volleyError.getMessage());
+
+                            }
+
+                            Log.d(">>>>>>>>>>>>",""+volleyError.getMessage());
                             // Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG);
                         }
                     });

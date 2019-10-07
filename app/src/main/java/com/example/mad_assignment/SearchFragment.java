@@ -17,9 +17,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
@@ -49,6 +52,7 @@ public class SearchFragment extends Fragment {
     private static final String SearchAPI = "https://jericho.pnisolutions.com.au/Public/getSubject";//http://my-json-server.typicode.com/RahulRathodGitHub/demoJSON/lectures/";
     private JSONObject jsonBody = new JSONObject();
     private List<LectureDetails> lectureDetailsList;
+    private TextView NoInetSearch;
 
     // We are using joda time for easier time formatting.
     private DateTimeFormatter dateFormat = ISODateTimeFormat.dateTime();
@@ -68,6 +72,7 @@ public class SearchFragment extends Fragment {
         searchBar = (SearchView) view.findViewById(R.id.searchBar);
         courseCode = (TextView) view.findViewById(R.id.CourseCode);
         outcomeLabel = (TextView) view.findViewById(R.id.outcomeLabel);
+        NoInetSearch = (TextView) view.findViewById(R.id.NoInetSearch);
 
         searchRecyclerView = (RecyclerView) view.findViewById(R.id.searchRecyclerView);
         searchRecyclerView.setHasFixedSize(true);
@@ -154,6 +159,7 @@ public class SearchFragment extends Fragment {
                             lectureDetailsList = new ArrayList<>();
 
                             try {
+                                NoInetSearch.setVisibility(View.INVISIBLE);
 
                                 //JSONObject jsonObject = new JSONObject(response);
                                 JSONArray jsonArray = response.getJSONArray("data");
@@ -184,9 +190,16 @@ public class SearchFragment extends Fragment {
                     },
                     new Response.ErrorListener() {
                         @Override
-                        public void onErrorResponse(VolleyError error) {
+                        public void onErrorResponse(VolleyError volleyError) {
 
-                            Log.d(">>>>>>>>>>>>",""+error.getMessage());
+                            if (volleyError instanceof NetworkError || volleyError instanceof AuthFailureError || volleyError instanceof TimeoutError) {
+
+                                NoInetSearch.setVisibility(View.VISIBLE);
+                                Log.d(">>>>>>>>>>>>","Internet Error: "+volleyError.getMessage());
+
+                            }
+
+                            Log.d(">>>>>>>>>>>>",""+volleyError.getMessage());
                             // Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG);
                         }
                     });
