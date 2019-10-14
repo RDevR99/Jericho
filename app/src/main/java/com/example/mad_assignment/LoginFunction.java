@@ -174,9 +174,9 @@ public class LoginFunction extends Activity
 
                             try {
 
-                                JSONObject jsonObject = new JSONObject("response");
+                                //JSONObject jsonObject = new JSONObject(response);
 
-                                String respString = jsonObject.getString("response");
+                                String respString = response.getString("response");
                                 //JSONArray jsonArray = response.getJSONArray("");
 
                                 resp = respString.equalsIgnoreCase("success");
@@ -217,6 +217,9 @@ public class LoginFunction extends Activity
         }
         try {
             login = new AuthenticateUser().execute(getAccount(), getPassword()).get();
+            Log.d("Username", getAccount());
+            Log.d("Paswrd", getPassword());
+            Log.d("This is Boolean",""+login);
         }
         catch(Exception e)
         {
