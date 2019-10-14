@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<DateTime> alarmSchedules = new ArrayList<>();
 
     // Server's API URL to get all the schedules for all the classes.
-    private static final String API = "https://jericho.pnisolutions.com.au/Public/getSubject"; //"https://jericho.pnisolutions.com.au/Students/getClasses";
+    private static final String API = "https://jericho.pnisolutions.com.au/Students/getClasses";
 
     // JSON object to represent the data obtained from the server.
     private JSONObject jsonBody = new JSONObject();
@@ -287,68 +287,6 @@ public class MainActivity extends AppCompatActivity {
     public void cancelAlarms() {
         for (int i = 0; alarmManagers != null && i < alarmManagers.length; i++) {
             alarmManagers[i].cancel(intentArray.get(i));
-        }
-    }
-
-    //endregion
-
-    //region Authentication
-
-    //TODO: SetAlarmSchedulesAsync can be used instead of calling authenticatUser.
-    public class AuthenticateUser extends AsyncTask<String, String, Boolean> {
-
-        boolean resp = false;
-
-
-        @Override
-        protected Boolean doInBackground(String... strings) {
-
-            try {
-                jsonBody.put("Identifier", strings[0]);
-                jsonBody.put("Password", strings[1]);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            final String requestBody = jsonBody.toString();
-
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
-                    API,
-                    jsonBody,
-                    new Response.Listener<JSONObject>() {
-
-                        @Override
-                        public void onResponse(JSONObject response) {
-
-                            try {
-
-                                JSONObject jsonObject = new JSONObject("response");
-
-                                String respString = jsonObject.getString("response");
-                                //JSONArray jsonArray = response.getJSONArray("");
-
-                                resp = respString.equalsIgnoreCase("success");
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-
-                            Log.d(">>>>>>>>>>>>", "" + error.getMessage());
-
-                        }
-                    });
-
-            // Now we have the request, to execute it we need a requst queue.
-
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            requestQueue.add(jsonObjectRequest);
-
-            return resp;
         }
     }
 
