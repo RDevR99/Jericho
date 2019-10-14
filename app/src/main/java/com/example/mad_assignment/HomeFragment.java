@@ -45,7 +45,6 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private FloatingActionButton floatingActionButton;
-    private Button loginButton;
 
     /*
        We need to perform network based request. For doing that we are using Volley.
@@ -69,9 +68,6 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
-       // The code below is flexible, but is it efficient?
-       // this.API_URL = getString(R.string.API_URL);
 
         // We use recycler view to display data as a vertical scrollable screen.
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
@@ -117,8 +113,9 @@ public class HomeFragment extends Fragment {
 
             // Now through stringRequest of volley we wil make a string request
             try{
-                jsonBody.put("Identifier", "18916900");
-                jsonBody.put("Password", "1234");
+              //  jsonBody.put("Identifier", "18916900");
+              //  jsonBody.put("Password", "1234");
+                jsonBody.put("CourseCode", "CSE2MAD");
             }
             catch (JSONException e)
             {
@@ -145,6 +142,8 @@ public class HomeFragment extends Fragment {
 
                                 for(int i=0; i<jsonArray.length(); i++) {
                                    JSONObject obj = jsonArray.getJSONObject(i);
+
+                                   Log.d("Test JSON Object:", obj.getString("CourseCode"));
 
                                     LectureDetails lectureDetail = new LectureDetails(
                                             obj.getString("CourseCode"),
@@ -200,7 +199,5 @@ public class HomeFragment extends Fragment {
         return timestamp;
     }
     //endregion
-
-
 
 }
