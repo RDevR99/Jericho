@@ -3,11 +3,23 @@ package com.example.mad_assignment;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.mad_assignment.SharedPreferencesUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class LoginFunction extends Activity
@@ -19,6 +31,11 @@ public class LoginFunction extends Activity
     private CheckBox auto_Login; // Keep me logged in
     private ImageView see_password;
     private SharedPreferencesUtils sharedPreference;
+    private static final String API = "https://jericho.pnisolutions.com.au/Students/Login";
+    private boolean login = false;
+
+    // JSON object to represent the data obtained from the server.
+    private JSONObject jsonBody = new JSONObject();
 
     @Override
     protected  void onCreate(Bundle savedInstanceState){
@@ -127,6 +144,68 @@ public class LoginFunction extends Activity
         return false;
     }
 
+    //region Authentication
+
+    //TODO: SetAlarmSchedulesAsync can be used instead of calling authenticatUser.
+    public class AuthenticateUser extends AsyncTask<String, String, Boolean> {
+
+        boolean resp = false;
+
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+
+            try {
+                jsonBody.put("Identifier", strings[0]);
+                jsonBody.put("Password", strings[1]);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            final String requestBody = jsonBody.toString();
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
+                    API,
+                    jsonBody,
+                    new Response.Listener<JSONObject>() {
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+
+                            try {
+
+                                JSONObject jsonObject = new JSONObject("response");
+
+                                String respString = jsonObject.getString("response");
+                                //JSONArray jsonArray = response.getJSONArray("");
+
+                                resp = respString.equalsIgnoreCase("success");
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                            Log.d(">>>>>>>>>>>>", "" + error.getMessage());
+
+                        }
+                    });
+
+            // Now we have the request, to execute it we need a requst queue.
+
+            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+            requestQueue.add(jsonObjectRequest);
+
+            return resp;
+        }
+    }
+
+    //endregion
+
     private void login(){
         if(getAccount().isEmpty()){
             showToast("Account required!");
@@ -136,18 +215,24 @@ public class LoginFunction extends Activity
             showToast("Password required!");
             return;
         }
+        try {
+            login = new AuthenticateUser().execute(getAccount(), getPassword()).get();
+        }
+        catch(Exception e)
+        {
+
+        }
         Thread loginRunnable = new Thread() {
             @Override
             public void run() {
                 super.run();
                 setLoginBtnClickable(false);
-
                 // This condition will change to pass HTTP requests
                 // if(request.getString("response").equalsIgnoreCase("Success"))
-                if (getAccount().equals("admin") && getPassword().equals("admin"))
+                if (login)
                 {
                     loadCheckBoxState();
-                    startActivity(new Intent(LoginFunction.this, HomeFragment.class));
+                    startActivity(new Intent(LoginFunction.this, SettingsFragment.class));
                    // finish();
                 }
                 else {
@@ -192,25 +277,25 @@ public class LoginFunction extends Activity
     }
     public void loadCheckBoxState(CheckBox C_remember, CheckBox auto_Login){
 
+        sharedPreference.putValues(
+                new SharedPreferencesUtils.ContentValue("account",getAccount()),
+        new SharedPreferencesUtils.ContentValue("password",getPassword()));
+
         if(auto_Login.isSelected()){
             sharedPreference.putValues(
                     new SharedPreferencesUtils.ContentValue("rememberPassword", true),
-                    new SharedPreferencesUtils.ContentValue("autoLogin", true),
-                    new SharedPreferencesUtils.ContentValue("account",getAccount()),
-                    new SharedPreferencesUtils.ContentValue("password",getPassword()));
+                    new SharedPreferencesUtils.ContentValue("autoLogin", true));
+
         }
         else if(!C_remember.isSelected()) {
             sharedPreference.putValues(
                     new SharedPreferencesUtils.ContentValue("rememberPassword", false),
-                    new SharedPreferencesUtils.ContentValue("autoLogin", false),
-                    new SharedPreferencesUtils.ContentValue("password", ""));
+                    new SharedPreferencesUtils.ContentValue("autoLogin", false));
         }
         else if(C_remember.isSelected()){
             sharedPreference.putValues(
                     new SharedPreferencesUtils.ContentValue("rememberPassword", true),
-                    new SharedPreferencesUtils.ContentValue("autoLogin", false),
-                    new SharedPreferencesUtils.ContentValue("account",getAccount()),
-                    new SharedPreferencesUtils.ContentValue("password", getPassword()));
+                    new SharedPreferencesUtils.ContentValue("autoLogin", false));
         }
     }
     public void setLoginBtnClickable(boolean clickable){

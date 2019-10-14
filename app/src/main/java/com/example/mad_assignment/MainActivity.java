@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<DateTime> alarmSchedules = new ArrayList<>();
 
     // Server's API URL to get all the schedules for all the classes.
-    private static final String API = "https://jericho.pnisolutions.com.au/Public/getSubject"; //"https://jericho.pnisolutions.com.au/Students/getClasses";
+    private static final String API = "https://jericho.pnisolutions.com.au/Students/getClasses";
 
     // JSON object to represent the data obtained from the server.
     private JSONObject jsonBody = new JSONObject();

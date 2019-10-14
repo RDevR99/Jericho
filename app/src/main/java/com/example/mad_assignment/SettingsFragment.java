@@ -1,17 +1,31 @@
 package com.example.mad_assignment;
 
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class SettingsFragment extends Fragment {
 
@@ -27,6 +41,8 @@ public class SettingsFragment extends Fragment {
     // Turn notifications ON and OFF.
     Switch notificationSwitch;
 
+    Button loginBtn;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -35,6 +51,8 @@ public class SettingsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_settings, null);
 
     }
+
+
 
     /*
         The function to enable and disable the notifications.
@@ -86,6 +104,16 @@ public class SettingsFragment extends Fragment {
 
                 sharedPreferences.edit().putBoolean("notificationEnabled", notificationSwitch.isChecked()).commit();
                 toggleNotificationSettings(notificationSwitch.isChecked());
+            }
+        });
+
+        loginBtn = getActivity().findViewById(R.id.loginBtn);
+
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent goToLogin = new Intent(getContext(), LoginFunction.class);
+                startActivity(goToLogin);
             }
         });
 
