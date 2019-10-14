@@ -352,6 +352,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     //endregion
 
     @Override
@@ -384,6 +385,20 @@ public class MainActivity extends AppCompatActivity {
 
         setAlarms();
 
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Boolean rememberPassword = sharedPreferences.getBoolean("rememberPassword", false);
+
+        if(!rememberPassword)
+        {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("password", null);
+        }
 
     }
 }
