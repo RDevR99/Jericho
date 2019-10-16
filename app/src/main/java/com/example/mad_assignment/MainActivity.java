@@ -14,6 +14,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
@@ -31,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
+
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     //region Screen Navigation and State Management
 
@@ -361,6 +365,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
         // Get the shared preferences to access the key value pairs
         sharedPreferences = this.getSharedPreferences("MyPreferences", 0);
 
@@ -388,6 +395,35 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /*
+        The method below is to facilitate the firebase analytics
+        This method will log the search term that the user will enter to look for a lecture.
+        The analysis would help us to identify most searched lectures.
+     */
+    public void logSearchEvent(String query)
+    {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.SEARCH_TERM, query);
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SEARCH, bundle);
+    }
+
+    /*
+        The method below would help us log a login event to the firebase
+        The resultant analytics will help us get the amount of users logging in our app.
+     */
+    public void logLoginEvent()
+    {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.METHOD, "In App (using NODE.JS)");
+        Log.d("Query to be logged","Login activity is being logged");
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
+    }
+
+
+    /*
+        If the user did not opt to store his./her password then, during onDestroy,
+        The user password would be set to null.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

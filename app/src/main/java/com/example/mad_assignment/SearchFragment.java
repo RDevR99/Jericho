@@ -88,6 +88,8 @@ public class SearchFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String s) {
 
+                ((MainActivity)getActivity()).logSearchEvent(s);
+
                 courseCode.setText("Course Code: "+s.toUpperCase());
 
                 if(s!="")

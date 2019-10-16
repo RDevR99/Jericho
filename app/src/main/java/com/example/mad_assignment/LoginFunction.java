@@ -32,7 +32,7 @@ public class LoginFunction extends Activity
     private ImageView see_password;
     private SharedPreferencesUtils sharedPreference;
     private static final String API = "https://jericho.pnisolutions.com.au/Students/Login";
-    private boolean login = false;
+    private boolean login = true;
 
     // JSON object to represent the data obtained from the server.
     private JSONObject jsonBody = new JSONObject();
@@ -149,8 +149,7 @@ public class LoginFunction extends Activity
     //TODO: SetAlarmSchedulesAsync can be used instead of calling authenticatUser.
     public class AuthenticateUser extends AsyncTask<String, String, Boolean> {
 
-        boolean resp = false;
-
+        boolean resp = true;
 
         @Override
         protected Boolean doInBackground(String... strings) {
@@ -178,13 +177,17 @@ public class LoginFunction extends Activity
 
                                 String respString = response.getString("response");
                                 //JSONArray jsonArray = response.getJSONArray("");
+                                Log.d("Response str", respString);
 
                                 resp = respString.equalsIgnoreCase("success");
+
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
+
+
                     },
                     new Response.ErrorListener() {
                         @Override
