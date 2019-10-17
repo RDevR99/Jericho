@@ -1,6 +1,7 @@
 package com.example.mad_assignment;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -53,6 +54,9 @@ public class HomeFragment extends Fragment {
     private Button loginButton;
     private TextView NoInetHome;
 
+    // Shared preference to store global key value pairs for the application.
+    SharedPreferences sharedPreferences;
+
     /*
        We need to perform network based request. For doing that we are using Volley.
        We also need internet permission for that in our manifest file.
@@ -81,6 +85,9 @@ public class HomeFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true); // Every component will have a same size
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // Get the shared preferences to access the key value pairs
+        sharedPreferences = getActivity().getSharedPreferences("MyPreferences", 0);
 
         // A floating action button to facilitate manual refresh.
         floatingActionButton = view.findViewById(R.id.floatingActionButton);
@@ -121,9 +128,9 @@ public class HomeFragment extends Fragment {
 
             // Now through stringRequest of volley we wil make a string request
             try{
-              //  jsonBody.put("Identifier", "18916900");
-              //  jsonBody.put("Password", "1234");
-                jsonBody.put("CourseCode", "CSE2MAD");
+                jsonBody.put("Identifier", sharedPreferences.getString("account", "18916900"));
+                jsonBody.put("Password", sharedPreferences.getString("password", "1234"));
+              //   jsonBody.put("CourseCode", "CSE2MAD");
             }
             catch (JSONException e)
             {

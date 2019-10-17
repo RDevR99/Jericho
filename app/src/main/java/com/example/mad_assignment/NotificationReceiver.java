@@ -31,13 +31,15 @@ public class NotificationReceiver extends BroadcastReceiver {
         // Need to find a way for the request code to be flexible. May be store the requstCode somewhere inthe intent exttras and access it here.
         PendingIntent pendingIntent = stackBuilder.getPendingIntent(intent.getIntExtra("requestCode", 0), PendingIntent.FLAG_UPDATE_CURRENT);
 
+        String lectureName = intent.getStringExtra("Lecture Name");
+        String NotificationText = intent.getStringExtra("Notification Text");
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
         long[] vibrationPattern = {500,500};
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-        Notification notification = builder.setContentTitle("MAD Lecture in 10 Minutes")
-                .setContentText("Dr. Scott is Waiting")
+        Notification notification = builder.setContentTitle(lectureName)
+                .setContentText(NotificationText)
                 .setLights(Color.RED, 500, 50)
                 .setVibrate(vibrationPattern)
                 .setSound(alarmSound)

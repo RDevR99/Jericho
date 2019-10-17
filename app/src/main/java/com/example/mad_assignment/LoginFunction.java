@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.PrecomputedText;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
@@ -41,7 +42,7 @@ public class LoginFunction extends Activity
     protected  void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_form);
-        sharedPreference = new SharedPreferencesUtils(this,"setting");
+        sharedPreference = new SharedPreferencesUtils(this,"MyPreferences"); //this.getSharedPreferences("MyPreferences", 0);
         initViews(); // Initialize the view components.
         setupEvents(); // Set up the on click listeners.
         initData();
@@ -147,16 +148,13 @@ public class LoginFunction extends Activity
     //region Authentication
 
     //TODO: SetAlarmSchedulesAsync can be used instead of calling authenticatUser.
-    public class AuthenticateUser extends AsyncTask<String, String, Boolean> {
+    public Boolean AuthenticateUser(String Identifier, String Password, final ServerCallback callback) {
 
-        boolean resp = true;
-
-        @Override
-        protected Boolean doInBackground(String... strings) {
+        final boolean[] resp = {false};
 
             try {
-                jsonBody.put("Identifier", strings[0]);
-                jsonBody.put("Password", strings[1]);
+                jsonBody.put("Identifier", Identifier);
+                jsonBody.put("Password", Password);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -173,21 +171,19 @@ public class LoginFunction extends Activity
 
                             try {
 
-                                //JSONObject jsonObject = new JSONObject(response);
+                                //JSONObject jsonObject = new JSONObject("response");
 
                                 String respString = response.getString("response");
                                 //JSONArray jsonArray = response.getJSONArray("");
-                                Log.d("Response str", respString);
 
-                                resp = respString.equalsIgnoreCase("success");
+                                resp[0] = respString.equalsIgnoreCase("success");
 
+                                callback.onSuccess(resp[0]);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
-
-
                     },
                     new Response.ErrorListener() {
                         @Override
@@ -203,11 +199,13 @@ public class LoginFunction extends Activity
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
             requestQueue.add(jsonObjectRequest);
 
-            return resp;
-        }
+            return resp[0];
     }
 
+
     //endregion
+
+
 
     private void login(){
         if(getAccount().isEmpty()){
@@ -219,38 +217,54 @@ public class LoginFunction extends Activity
             return;
         }
         try {
-            login = new AuthenticateUser().execute(getAccount(), getPassword()).get();
-            Log.d("Username", getAccount());
-            Log.d("Paswrd", getPassword());
-            Log.d("This is Boolean",""+login);
+            AuthenticateUser(getAccount(), getPassword(), new ServerCallback(){
+                @Override
+                public void onSuccess(Boolean result) {
+                    //login  = result;
+                    if (result)
+                    {
+                        loadCheckBoxState();
+                        Log.d("is is ok","YES");
+                        startActivity(new Intent(LoginFunction.this, MainActivity.class));
+
+                    }
+                    else {
+                        showToast("Invalid account or password");
+                    }
+
+                    Log.d("Username", getAccount());
+                    Log.d("Paswrd", getPassword());
+                    Log.d("This is Boolean",""+ result);
+                }
+
+            });
+
         }
         catch(Exception e)
         {
 
         }
-        Thread loginRunnable = new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                setLoginBtnClickable(false);
-                // This condition will change to pass HTTP requests
-                // if(request.getString("response").equalsIgnoreCase("Success"))
-                if (login)
-                {
-                    loadCheckBoxState();
-                    startActivity(new Intent(LoginFunction.this, SettingsFragment.class));
-                   // finish();
-                }
-                else {
-                    showToast("Invalid account or password");
-                }
 
-                // Not sure if the below line is required.
-                //setLoginBtnClickable(true);
-            }
-        };
+        //region badcode
+        //setLoginBtnClickable(false);
+        // This condition will change to pass HTTP requests
+        // if(request.getString("response").equalsIgnoreCase("Success"))
+        /*if (login)
+        {
+            loadCheckBoxState();
+            Log.d("is is ok","YES");
+            startActivity(new Intent(LoginFunction.this, SettingsFragment.class));
+            // finish();
+        }
+        else {
+            showToast("Invalid account or password");
+        }*/
 
-        loginRunnable.start();
+        // Not sure if the below line is required.
+        //setLoginBtnClickable(true);
+        //endregion
+
+
     }
     public void loadAccount()
     {

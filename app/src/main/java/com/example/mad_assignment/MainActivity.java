@@ -118,10 +118,10 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<DateTime> alarmSchedules = new ArrayList<>();
 
     // Server's API URL to get all the schedules for all the classes.
-    private static final String API = "https://jericho.pnisolutions.com.au/Students/getClasses";
+    private static final String API = "https://jericho.pnisolutions.com.au/Public/getSubject"; // https://jericho.pnisolutions.com.au/Students/getClasses";
 
     // JSON object to represent the data obtained from the server.
-    private JSONObject jsonBody = new JSONObject();
+    private static JSONObject jsonBody = new JSONObject();
 
     // No. of hours prior the lecture that the user want the notifications on.
     int notifyMeBeforeHours = 0;
@@ -166,10 +166,10 @@ public class MainActivity extends AppCompatActivity {
 
             // Now through stringRequest of volley we wil make a string request
             try {
-                //TODO: Remove the line below and uncomment the couple of lines underneath it.
+                //TODO: Remove the line below and uncomment the couple of lines underneath it and remove the default credentials
                 jsonBody.put("CourseCode", "CSE2MAD");
-                //jsonBody.put("Identifier", "18916900");
-                //jsonBody.put("Password", "1234");
+               // jsonBody.put("Identifier", sharedPreferences.getString("account", "18916900"));
+               // jsonBody.put("Password", sharedPreferences.getString("password","1234"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -193,9 +193,11 @@ public class MainActivity extends AppCompatActivity {
                                     JSONObject obj = jsonArray.getJSONObject(i);
 
                                     alarmSchedules.add(DateTime.parse(obj.getString("Time"))
-                                            .minusHours(Integer.valueOf(strings[0]))
-                                            .minusMinutes(Integer.valueOf(strings[1]))
+                                        //    .minusHours(Integer.valueOf(strings[0]))
+                                        //    .minusMinutes(Integer.valueOf(strings[1]))
                                             );
+
+                                    setAlarms();
 
                                 }
 
@@ -255,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // TODO: Remove the log below
-            Log.d("This is the actual time", ""+calendars[i]);
+            Log.d("This is the actual time", ""+alarmSchedules.get(i));
             Log.d("THis is the time string", ""+ calendarTime.toDate());
 
             // Notification Intent is initiated and configured.
@@ -293,69 +295,6 @@ public class MainActivity extends AppCompatActivity {
             alarmManagers[i].cancel(intentArray.get(i));
         }
     }
-
-    //endregion
-
-    //region Authentication
-
-    //TODO: SetAlarmSchedulesAsync can be used instead of calling authenticatUser.
-    public class AuthenticateUser extends AsyncTask<String, String, Boolean> {
-
-        boolean resp = false;
-
-
-        @Override
-        protected Boolean doInBackground(String... strings) {
-
-            try {
-                jsonBody.put("Identifier", strings[0]);
-                jsonBody.put("Password", strings[1]);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            final String requestBody = jsonBody.toString();
-
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
-                    API,
-                    jsonBody,
-                    new Response.Listener<JSONObject>() {
-
-                        @Override
-                        public void onResponse(JSONObject response) {
-
-                            try {
-
-                                JSONObject jsonObject = new JSONObject("response");
-
-                                String respString = jsonObject.getString("response");
-                                //JSONArray jsonArray = response.getJSONArray("");
-
-                                resp = respString.equalsIgnoreCase("success");
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-
-                            Log.d(">>>>>>>>>>>>", "" + error.getMessage());
-
-                        }
-                    });
-
-            // Now we have the request, to execute it we need a requst queue.
-
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            requestQueue.add(jsonObjectRequest);
-
-            return resp;
-        }
-    }
-
 
     //endregion
 
