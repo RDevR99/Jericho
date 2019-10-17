@@ -49,7 +49,7 @@ public class SearchFragment extends Fragment {
     private TextView courseCode;
     private TextView outcomeLabel;
 
-    private static final String SearchAPI = "https://jericho.pnisolutions.com.au/Public/getSubject";//http://my-json-server.typicode.com/RahulRathodGitHub/demoJSON/lectures/";
+    private static final String SearchAPI = "https://jericho.pnisolutions.com.au/Public/getSubject";
     private JSONObject jsonBody = new JSONObject();
     private List<LectureDetails> lectureDetailsList;
     private TextView NoInetSearch;
@@ -88,6 +88,7 @@ public class SearchFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String s) {
 
+                // Logging the search term to firebase analytics.
                 ((MainActivity)getActivity()).logSearchEvent(s);
 
                 courseCode.setText("Course Code: "+s.toUpperCase());
@@ -169,6 +170,8 @@ public class SearchFragment extends Fragment {
                                 for(int i=0; i<jsonArray.length(); i++) {
                                     JSONObject obj = jsonArray.getJSONObject(i);
 
+                                    Log.d("This is the srchtime",obj.getString("Time"));
+
                                     LectureDetails lectureDetail = new LectureDetails(
                                             obj.getString("CourseCode"),
                                             obj.getString("Room"),
@@ -180,6 +183,7 @@ public class SearchFragment extends Fragment {
 
                                     lectureDetailsList.add(lectureDetail);
                                 }
+
 
                                 adapter = new LectureDetailsAdapter(lectureDetailsList, getContext());
 
@@ -207,7 +211,7 @@ public class SearchFragment extends Fragment {
                     });
 
 
-            // Now we have the request, to execute it we need a requst queue.
+            // Now we have the request, to execute it we need a request queue.
 
             RequestQueue requestQueue = Volley.newRequestQueue(getContext());
             requestQueue.add(jsonObjectRequest);

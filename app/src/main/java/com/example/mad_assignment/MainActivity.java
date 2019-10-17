@@ -25,10 +25,13 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -123,6 +126,8 @@ public class MainActivity extends AppCompatActivity {
     // JSON object to represent the data obtained from the server.
     private static JSONObject jsonBody = new JSONObject();
 
+    private DateTimeFormatter dateFormat = ISODateTimeFormat.dateTime();
+
     // No. of hours prior the lecture that the user want the notifications on.
     int notifyMeBeforeHours = 0;
     // No. of Minutes prior the lecture that the user want the notifications on.
@@ -156,10 +161,10 @@ public class MainActivity extends AppCompatActivity {
     /*
         Method to Asynchronously load the data for the Recycler View.
     */
-    public class SetAlarmSchedulesAsync extends AsyncTask<String, String, Void> {
+    public class SetAlarmSchedulesAsync extends AsyncTask<Void, Void, Void> {
 
         @Override
-        protected Void doInBackground(final String... strings) {
+        protected Void doInBackground(Void... params) {
 
             // In this method, we will fetch data from internet.
             // As the data is coming from internet, it might take some time, so we will show a progress dialog.
@@ -192,10 +197,10 @@ public class MainActivity extends AppCompatActivity {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject obj = jsonArray.getJSONObject(i);
 
-                                    alarmSchedules.add(DateTime.parse(obj.getString("Time"))
-                                        //    .minusHours(Integer.valueOf(strings[0]))
-                                        //    .minusMinutes(Integer.valueOf(strings[1]))
-                                            );
+                                    alarmSchedules.add(new DateTime( new Timestamp(dateFormat.parseDateTime(obj.getString("Time")).getMillis())));
+
+
+
 
                                     setAlarms();
 
@@ -221,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
 
             return null;
         }
+
     }
 
     /*
@@ -320,12 +326,8 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setCurrentItem(0);
         viewPager.setOnPageChangeListener(new PageChange());
 
-        // The variables below would be initialized with the values from shared utils.
-        notifyMeBeforeHours = sharedPreferences.getInt("notifyMeBeforeHours", 0);
-        notifyMeBeforeMinutes = sharedPreferences.getInt("notifyMeBeforeMinutes", 0);
-
         // We will execute the task to schedule the alarms/Notifications
-        new SetAlarmSchedulesAsync().execute("" + notifyMeBeforeHours, "" + notifyMeBeforeMinutes);
+        new SetAlarmSchedulesAsync().execute();
 
         //  alarmSchedules.add(new DateTime().plusHours(notifyMeBeforeHours).plusMinutes(notifyMeBeforeMinutes).getMillis());
 
