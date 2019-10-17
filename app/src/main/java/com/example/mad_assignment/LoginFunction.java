@@ -297,6 +297,8 @@ public class LoginFunction extends Activity
     }
     public void loadCheckBoxState(CheckBox C_remember, CheckBox auto_Login){
 
+
+
         sharedPreference.putValues(
                 new SharedPreferencesUtils.ContentValue("account",getAccount()),
         new SharedPreferencesUtils.ContentValue("password",getPassword()));

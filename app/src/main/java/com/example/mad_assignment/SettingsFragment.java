@@ -42,6 +42,7 @@ public class SettingsFragment extends Fragment {
     Switch notificationSwitch;
 
     Button loginBtn;
+    boolean logout;
 
     @Nullable
     @Override
@@ -109,11 +110,30 @@ public class SettingsFragment extends Fragment {
 
         loginBtn = getActivity().findViewById(R.id.loginBtn);
 
+        if(!sharedPreferences.getString("account", null).equalsIgnoreCase("") && !sharedPreferences.getString("password", null).equalsIgnoreCase(""))
+        {
+            loginBtn.setText("Log Out");
+            logout = true;
+        }
+
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent goToLogin = new Intent(getContext(), LoginFunction.class);
-                startActivity(goToLogin);
+                if(!logout) {
+                    logout = true;
+
+                    Intent goToLogin = new Intent(getContext(), LoginFunction.class);
+                    startActivity(goToLogin);
+                }
+                else
+                {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("account", "");
+                    editor.putString("password", "");
+                    loginBtn.setText("Login");
+                    logout = false;
+                    editor.commit();
+                }
             }
         });
 

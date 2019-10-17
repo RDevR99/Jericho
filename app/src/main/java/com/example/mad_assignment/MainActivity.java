@@ -375,6 +375,7 @@ public class MainActivity extends AppCompatActivity {
         {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("password", null);
+            editor.commit();
         }
 
     }
