@@ -22,7 +22,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         // We pass the intent to the notification activity class
         // In a future iteration the notification activity could be a map activity showing the wayto the lecture.
-        Intent notificationIntent = new Intent(context, NotificationActivity.class);
+        Intent notificationIntent = new Intent(context, MainActivity.class);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(NotificationActivity.class);

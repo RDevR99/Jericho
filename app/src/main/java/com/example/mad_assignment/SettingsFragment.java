@@ -110,7 +110,7 @@ public class SettingsFragment extends Fragment {
 
         loginBtn = getActivity().findViewById(R.id.loginBtn);
 
-        if(!sharedPreferences.getString("account", null).equalsIgnoreCase("") && !sharedPreferences.getString("password", null).equalsIgnoreCase(""))
+        if(!sharedPreferences.getString("account", "").equalsIgnoreCase("") && !sharedPreferences.getString("password", "").equalsIgnoreCase(""))
         {
             loginBtn.setText("Log Out");
             logout = true;

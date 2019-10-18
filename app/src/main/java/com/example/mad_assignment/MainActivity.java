@@ -118,10 +118,10 @@ public class MainActivity extends AppCompatActivity {
     Calendar[] calendars;
 
     //The below is the Alarm data we get from the server.
-    ArrayList<DateTime> alarmSchedules = new ArrayList<>();
+    ArrayList<LectureDetails> alarmSchedules = new ArrayList<>();
 
     // Server's API URL to get all the schedules for all the classes.
-    private static final String API = "https://jericho.pnisolutions.com.au/Public/getSubject"; // https://jericho.pnisolutions.com.au/Students/getClasses";
+    private static final String API = "https://jericho.pnisolutions.com.au/Public/getSubject"; //"https://jericho.pnisolutions.com.au/Students/getClasses";
 
     // JSON object to represent the data obtained from the server.
     private static JSONObject jsonBody = new JSONObject();
@@ -171,10 +171,9 @@ public class MainActivity extends AppCompatActivity {
 
             // Now through stringRequest of volley we wil make a string request
             try {
-                //TODO: Remove the line below and uncomment the couple of lines underneath it and remove the default credentials
-                jsonBody.put("CourseCode", "CSE2MAD");
-               // jsonBody.put("Identifier", sharedPreferences.getString("account", "18916900"));
-               // jsonBody.put("Password", sharedPreferences.getString("password","1234"));
+                jsonBody.put("CourseCode","CSE2MAD");
+                        //jsonBody.put("Identifier", sharedPreferences.getString("account", ""));
+                //jsonBody.put("Password", sharedPreferences.getString("password",""));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -197,9 +196,17 @@ public class MainActivity extends AppCompatActivity {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject obj = jsonArray.getJSONObject(i);
 
-                                    alarmSchedules.add(new DateTime( new Timestamp(dateFormat.parseDateTime(obj.getString("Time")).getMillis())));
+                                    LectureDetails lectureDetail = new LectureDetails(
+                                            obj.getString("CourseCode"),
+                                            obj.getString("Room"),
+                                            new Timestamp( dateFormat.parseDateTime(obj.getString("Time")).getMillis()), //Timestamp
+                                            obj.getDouble("Duration"),
+                                            obj.getInt("isRunning")==1
+
+                                    );
 
 
+                                    alarmSchedules.add(lectureDetail);
 
 
                                     setAlarms();
@@ -246,48 +253,54 @@ public class MainActivity extends AppCompatActivity {
         // For each of the alarm we want to schedule...
         for (int i = 0; i < alarmSchedules.size(); i++) {
 
-            // We initialize all the calendar instances and set the required time when we want to receive the alarms
-            calendars[i] = Calendar.getInstance();
-
-            // We then set the time that the calendar object represents.
-            DateTime calendarTime = alarmSchedules.get(i).minusHours(sharedPreferences.getInt("notifyMeBeforeHours", 0)).minusMinutes(sharedPreferences.getInt("notifyMeBeforeMinutes", 0));
-
-            // If the the time set if before or equal to now then the user will get an immediate alarm.
-            // To avoid such a circumstance we are having an if condition in here.
-            if(calendarTime.isBeforeNow() || calendarTime.isEqualNow())
+            if(alarmSchedules.get(i).isActive)
             {
-                calendars[i].setTime(alarmSchedules.get(i).plusWeeks(1).toDate());
+
+                // We initialize all the calendar instances and set the required time when we want to receive the alarms
+                calendars[i] = Calendar.getInstance();
+
+                // We then set the time that the calendar object represents.
+                DateTime calendarTime = new DateTime(alarmSchedules.get(i).scheduledStart).minusHours(sharedPreferences.getInt("notifyMeBeforeHours", 0)).minusMinutes(sharedPreferences.getInt("notifyMeBeforeMinutes", 0));
+
+                // If the the time set if before or equal to now then the user will get an immediate alarm.
+                // To avoid such a circumstance we are having an if condition in here.
+                if(calendarTime.isBeforeNow() || calendarTime.isEqualNow())
+                {
+                    calendars[i].setTime(new DateTime(alarmSchedules.get(i).scheduledStart).plusWeeks(1).toDate());
+                }
+                else {
+                    calendars[i].setTime(calendarTime.toDate());
+                }
+
+                // TODO: Remove the log below
+                Log.d("This is the actual time", ""+alarmSchedules.get(i));
+                Log.d("THis is the time string", ""+ calendarTime.toDate());
+
+                // Notification Intent is initiated and configured.
+                Intent intent = new Intent(this, NotificationReceiver.class);
+                intent.setAction("MY_NOTIFICATION_MESSAGE");
+
+                // TODO:Use the actual data
+                // The unique request code for each notification is needed by the receiver receiving the intent so that it can identify what request codes it is open to
+                // However, In our case we give away the request code as the receiver needs to listen to multiple requests which are not feasible to hardcode.
+                intent.putExtra("requestCode", i);
+                intent.putExtra("Lecture Name", alarmSchedules.get(i).courseName);
+                intent.putExtra("Notification Text", "Lecture at "+alarmSchedules.get(i).venue+ " in "+sharedPreferences.getInt("notifyMeBeforeHours", 0)+" Hrs "+sharedPreferences.getInt("notifyMeBeforeMinutes", 0)+" Mins");
+
+                // The pending intent acts as a token that we provide the alarm manager, so that it get the permission to carry out its task.
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                // We instantiate the AlarmManager.
+                alarmManagers[i] = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+                // We set the alarmManager time, The first parameter facilitates the alarm to appear as a notification even if the application is sleeping.
+                alarmManagers[i].setExact(AlarmManager.RTC_WAKEUP, calendars[i].getTimeInMillis(), pendingIntent);
+
+                // We store the intents in the intentArray.
+                intentArray.add(pendingIntent);
+
+
             }
-            else {
-                calendars[i].setTime(calendarTime.toDate());
-            }
-
-            // TODO: Remove the log below
-            Log.d("This is the actual time", ""+alarmSchedules.get(i));
-            Log.d("THis is the time string", ""+ calendarTime.toDate());
-
-            // Notification Intent is initiated and configured.
-            Intent intent = new Intent(this, NotificationReceiver.class);
-            intent.setAction("MY_NOTIFICATION_MESSAGE");
-
-            // The unique request code for each notification is needed by the receiver receiving the intent so that it can identify what request codes it is open to
-            // However, In our case we give away the request code as the receiver needs to listen to multiple requests which are not feasible to hardcode.
-            intent.putExtra("requestCode", i);
-            intent.putExtra("Lecture Name","MAD");
-            intent.putExtra("Notification Text", "HI, Now is your lecture");
-
-            // The pending intent acts as a token that we provide the alarm manager, so that it get the permission to carry out its task.
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            // We instantiate the AlarmManager.
-            alarmManagers[i] = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-            // We set the alarmManager time, The first parameter facilitates the alarm to appear as a notification even if the application is sleeping.
-            alarmManagers[i].setExact(AlarmManager.RTC_WAKEUP, calendars[i].getTimeInMillis(), pendingIntent);
-
-            // We store the intents in the intentArray.
-            intentArray.add(pendingIntent);
-
         }
     }
 

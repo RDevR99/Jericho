@@ -23,10 +23,11 @@
         android:clickable="true"
         android:elevation="12dp"
         android:focusable="auto"
+        app:backgroundTint="@color/colorPrimaryDark"
         app:fabSize="auto"
         app:maxImageSize="30dp"
         app:pressedTranslationZ="6dp"
-        app:rippleColor="#00CA2C2C"
+        app:rippleColor="@color/colorPrimaryDark"
         app:srcCompat="@android:drawable/ic_popup_sync" />
 
     <TextView

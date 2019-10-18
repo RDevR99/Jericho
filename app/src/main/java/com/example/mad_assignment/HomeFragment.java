@@ -128,8 +128,8 @@ public class HomeFragment extends Fragment {
 
             // Now through stringRequest of volley we wil make a string request
             try{
-                jsonBody.put("Identifier", sharedPreferences.getString("account", "18916900"));
-                jsonBody.put("Password", sharedPreferences.getString("password", "1234"));
+                jsonBody.put("Identifier", sharedPreferences.getString("account", ""));
+                jsonBody.put("Password", sharedPreferences.getString("password", ""));
               //   jsonBody.put("CourseCode", "CSE2MAD");
             }
             catch (JSONException e)
