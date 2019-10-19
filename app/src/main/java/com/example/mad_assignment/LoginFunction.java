@@ -29,8 +29,6 @@ public class LoginFunction extends Activity
     private EditText E_password;
     private Button Login_Btn;
     private CheckBox C_remember;
-    private CheckBox auto_Login; // Keep me logged in
-    private ImageView see_password;
     private SharedPreferencesUtils sharedPreference;
     private static final String API = "https://jericho.pnisolutions.com.au/Students/Login";
     private boolean login = true;
@@ -53,7 +51,6 @@ public class LoginFunction extends Activity
         if(firstLogin()){
             // These are false by default...
             C_remember.setChecked(false);
-            auto_Login.setChecked(false);
         }
 
         if(rememberPassword())
@@ -62,10 +59,6 @@ public class LoginFunction extends Activity
             setTextAccountAndPassword();
         }
 
-        if(autoLogin()){
-            auto_Login.setChecked(true);
-            login();
-        }
     }
 
     public void setTextAccountAndPassword(){
@@ -106,8 +99,6 @@ public class LoginFunction extends Activity
         E_account = (EditText)findViewById(R.id.account);
         E_password = (EditText)findViewById(R.id.password);
         C_remember = (CheckBox)findViewById(R.id.remember_password);
-        auto_Login = (CheckBox)findViewById(R.id.autologin);
-        see_password = (ImageView)findViewById(R.id.seepassword);
     }
 
     private void setupEvents(){
@@ -124,12 +115,6 @@ public class LoginFunction extends Activity
        // C_remember.setOnCheckedChangeListener(this);
        // auto_Login.setOnCheckedChangeListener(this);
 
-        see_password.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setPasswordVisibility();
-            }
-        });
     }
 
     private boolean firstLogin(){
@@ -275,15 +260,7 @@ public class LoginFunction extends Activity
             sharedPreference.putValues(new SharedPreferencesUtils.ContentValue("account", getAccount()));
         }
     }
-    private void setPasswordVisibility(){
-        if(see_password.isSelected()){
-            //see_password.setSelected(false);
-            E_password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        }else{
-           // see_password.setSelected(true);
-            E_password.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-        }
-    }
+
     public String getAccount()
     {
         return E_account.getText().toString().trim();
@@ -293,9 +270,9 @@ public class LoginFunction extends Activity
         return E_password.getText().toString().trim();
     }
     private void loadCheckBoxState(){
-        loadCheckBoxState(C_remember, auto_Login);
+        loadCheckBoxState(C_remember);
     }
-    public void loadCheckBoxState(CheckBox C_remember, CheckBox auto_Login){
+    public void loadCheckBoxState(CheckBox C_remember){
 
 
 
@@ -303,13 +280,7 @@ public class LoginFunction extends Activity
                 new SharedPreferencesUtils.ContentValue("account",getAccount()),
         new SharedPreferencesUtils.ContentValue("password",getPassword()));
 
-        if(auto_Login.isSelected()){
-            sharedPreference.putValues(
-                    new SharedPreferencesUtils.ContentValue("rememberPassword", true),
-                    new SharedPreferencesUtils.ContentValue("autoLogin", true));
-
-        }
-        else if(!C_remember.isSelected()) {
+         if(!C_remember.isSelected()) {
             sharedPreference.putValues(
                     new SharedPreferencesUtils.ContentValue("rememberPassword", false),
                     new SharedPreferencesUtils.ContentValue("autoLogin", false));
@@ -324,17 +295,6 @@ public class LoginFunction extends Activity
         Login_Btn.setClickable(clickable);
     }
 
-    public void onCheckChanged(CompoundButton buttonView, boolean isChecked){
-        if(buttonView ==C_remember){
-            if(!isChecked){
-                auto_Login.setChecked(false);
-            }
-        }else if(buttonView == auto_Login){
-            if(isChecked){
-                C_remember.setChecked(true);
-            }
-        }
-    }
     public void showToast(final String msg){
         runOnUiThread(new Runnable() {
             @Override

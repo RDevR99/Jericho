@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,6 +43,7 @@ public class SettingsFragment extends Fragment {
     Switch notificationSwitch;
 
     Button loginBtn;
+    TextView LUser;
     boolean logout;
 
     @Nullable
@@ -109,9 +111,10 @@ public class SettingsFragment extends Fragment {
         });
 
         loginBtn = getActivity().findViewById(R.id.loginBtn);
-
+        LUser = getActivity().findViewById(R.id.LUser);
         if(!sharedPreferences.getString("account", "").equalsIgnoreCase("") && !sharedPreferences.getString("password", "").equalsIgnoreCase(""))
         {
+            LUser.setText("Currently logged in as: " +sharedPreferences.getString("account", ""));
             loginBtn.setText("Log Out");
             logout = true;
         }
@@ -131,6 +134,7 @@ public class SettingsFragment extends Fragment {
                     editor.putString("account", "");
                     editor.putString("password", "");
                     loginBtn.setText("Login");
+                    LUser.setText("");
                     logout = false;
                     editor.commit();
                 }
