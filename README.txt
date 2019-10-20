@@ -1,5 +1,15 @@
 MAD_Assignment by Team Jericho:
 
+MEMBERS:
+
+- Rahul Devendrabhai Rathod (19139433)
+- Corey Pearce (18916900)
+-  Xiaoqing Wu (18735179)
+
+LINK TO REPO: https://bitbucket.cs.latrobe.edu.au/users/19139433/repos/jericho/browse
+
+Relevant Information:
+
 1. Login Credentials for a user:
 
 	Username : 18916900
