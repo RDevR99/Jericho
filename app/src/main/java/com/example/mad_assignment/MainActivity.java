@@ -270,10 +270,6 @@ public class MainActivity extends AppCompatActivity {
                     calendars[i].setTime(calendarTime.toDate());
                 }
 
-                // TODO: Remove the log below
-                Log.d("This is the actual time", ""+alarmSchedules.get(i).scheduledStart);
-                Log.d("THis is the time string", ""+ calendarTime.toDate());
-
                 // Notification Intent is initiated and configured.
                 Intent intent = new Intent(this, NotificationReceiver.class);
                 intent.setAction("MY_NOTIFICATION_MESSAGE");
