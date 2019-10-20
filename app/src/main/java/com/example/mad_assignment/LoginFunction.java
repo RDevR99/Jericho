@@ -132,7 +132,7 @@ public class LoginFunction extends Activity
 
     //region Authentication
 
-    //TODO: SetAlarmSchedulesAsync can be used instead of calling authenticatUser.
+
     public Boolean AuthenticateUser(String Identifier, String Password, final ServerCallback callback) {
 
         final boolean[] resp = {false};
@@ -229,26 +229,6 @@ public class LoginFunction extends Activity
         {
 
         }
-
-        //region badcode
-        //setLoginBtnClickable(false);
-        // This condition will change to pass HTTP requests
-        // if(request.getString("response").equalsIgnoreCase("Success"))
-        /*if (login)
-        {
-            loadCheckBoxState();
-            Log.d("is is ok","YES");
-            startActivity(new Intent(LoginFunction.this, SettingsFragment.class));
-            // finish();
-        }
-        else {
-            showToast("Invalid account or password");
-        }*/
-
-        // Not sure if the below line is required.
-        //setLoginBtnClickable(true);
-        //endregion
-
 
     }
     public void loadAccount()

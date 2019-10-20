@@ -1,7 +1,8 @@
 package com.example.mad_assignment;
 
-import org.json.JSONObject;
-
+/*
+    The interface is used to facilitate waiting on a response object from an HTTP request.
+ */
 public interface ServerCallback {
     void onSuccess(Boolean result);
 }

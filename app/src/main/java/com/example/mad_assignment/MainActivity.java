@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<LectureDetails> alarmSchedules = new ArrayList<>();
 
     // Server's API URL to get all the schedules for all the classes.
-    private static final String API = "https://jericho.pnisolutions.com.au/Public/getSubject"; //"https://jericho.pnisolutions.com.au/Students/getClasses";
+    private static final String API = "https://jericho.pnisolutions.com.au/Students/getClasses";
 
     // JSON object to represent the data obtained from the server.
     private static JSONObject jsonBody = new JSONObject();
@@ -171,9 +171,8 @@ public class MainActivity extends AppCompatActivity {
 
             // Now through stringRequest of volley we wil make a string request
             try {
-                jsonBody.put("CourseCode","CSE2MAD");
-                        //jsonBody.put("Identifier", sharedPreferences.getString("account", ""));
-                //jsonBody.put("Password", sharedPreferences.getString("password",""));
+                jsonBody.put("Identifier", sharedPreferences.getString("account", ""));
+                jsonBody.put("Password", sharedPreferences.getString("password",""));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -190,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
 
                             try {
 
-                                //JSONObject jsonObject = new JSONObject(response);
                                 JSONArray jsonArray = response.getJSONArray("data");
 
                                 for (int i = 0; i < jsonArray.length(); i++) {
