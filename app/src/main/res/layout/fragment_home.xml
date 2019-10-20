@@ -40,4 +40,13 @@
         android:text="No Internet"
         tools:visibility="invisible" />
 
+    <TextView
+        android:id="@+id/notLoggedInText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/floatingActionButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="339dp"
+        android:text="Login from settings to see your schedule" />
+
 </RelativeLayout>

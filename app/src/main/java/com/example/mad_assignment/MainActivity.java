@@ -271,14 +271,13 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // TODO: Remove the log below
-                Log.d("This is the actual time", ""+alarmSchedules.get(i));
+                Log.d("This is the actual time", ""+alarmSchedules.get(i).scheduledStart);
                 Log.d("THis is the time string", ""+ calendarTime.toDate());
 
                 // Notification Intent is initiated and configured.
                 Intent intent = new Intent(this, NotificationReceiver.class);
                 intent.setAction("MY_NOTIFICATION_MESSAGE");
 
-                // TODO:Use the actual data
                 // The unique request code for each notification is needed by the receiver receiving the intent so that it can identify what request codes it is open to
                 // However, In our case we give away the request code as the receiver needs to listen to multiple requests which are not feasible to hardcode.
                 intent.putExtra("requestCode", i);

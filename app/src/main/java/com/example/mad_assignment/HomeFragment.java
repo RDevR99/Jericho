@@ -53,6 +53,7 @@ public class HomeFragment extends Fragment {
     private FloatingActionButton floatingActionButton;
     private Button loginButton;
     private TextView NoInetHome;
+    private TextView NotLoggedInText;
 
     // Shared preference to store global key value pairs for the application.
     SharedPreferences sharedPreferences;
@@ -82,12 +83,22 @@ public class HomeFragment extends Fragment {
 
         // We use recycler view to display data as a vertical scrollable screen.
         NoInetHome = (TextView) view.findViewById(R.id.NoInetHome);
+        NotLoggedInText = (TextView) view.findViewById(R.id.notLoggedInText);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true); // Every component will have a same size
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Get the shared preferences to access the key value pairs
         sharedPreferences = getActivity().getSharedPreferences("MyPreferences", 0);
+
+        if(sharedPreferences.getString("password", "").equalsIgnoreCase(""))
+        {
+            NotLoggedInText.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            NotLoggedInText.setVisibility(View.INVISIBLE);
+        }
 
         // A floating action button to facilitate manual refresh.
         floatingActionButton = view.findViewById(R.id.floatingActionButton);
@@ -130,7 +141,7 @@ public class HomeFragment extends Fragment {
             try{
                 jsonBody.put("Identifier", sharedPreferences.getString("account", ""));
                 jsonBody.put("Password", sharedPreferences.getString("password", ""));
-              //   jsonBody.put("CourseCode", "CSE2MAD");
+
             }
             catch (JSONException e)
             {
@@ -152,6 +163,15 @@ public class HomeFragment extends Fragment {
 
                             try {
                                 NoInetHome.setVisibility(View.INVISIBLE);
+
+                                if(sharedPreferences.getString("password", "").equalsIgnoreCase(""))
+                                {
+                                    NotLoggedInText.setVisibility(View.VISIBLE);
+                                }
+                                else
+                                {
+                                    NotLoggedInText.setVisibility(View.INVISIBLE);
+                                }
 
                                 //JSONObject jsonObject = new JSONObject(response);
                                 JSONArray jsonArray = response.getJSONArray("data");
